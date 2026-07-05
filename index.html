@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>محفظة الولاء</title>
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#241812" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#6F4E37; --secondary:#C8A97E; --bg:#241812; --btn:#C8A97E;
+    --card:#2f2018; --card2:#38271d; --ink:#F5EDE3; --muted:#B79E8A;
+    --ok:#7FB77E; --line:rgba(245,237,227,.10);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0;font-family:Tajawal,system-ui,sans-serif;background:var(--bg);
+    color:var(--ink);min-height:100dvh;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    background-image:radial-gradient(120% 80% at 50% -10%, rgba(200,169,126,.14), transparent 60%);
+  }
+  .wrap{max-width:480px;margin:0 auto;padding:20px 18px 40px}
+  .top{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+  .logo{width:44px;height:44px;border-radius:13px;object-fit:cover;
+    background:var(--card);border:1px solid var(--line)}
+  .hi{font-size:14px;color:var(--muted);line-height:1.2}
+  .hi b{display:block;font-size:19px;color:var(--ink);font-weight:800;margin-top:2px}
+
+  /* البطاقة الكبيرة */
+  .card{background:linear-gradient(160deg,var(--card2),var(--card));
+    border:1px solid var(--line);border-radius:24px;padding:24px 22px;
+    box-shadow:0 20px 40px -24px rgba(0,0,0,.7);position:relative;overflow:hidden}
+  .card::after{content:"";position:absolute;inset:0;
+    background:radial-gradient(80% 60% at 85% 0%, rgba(200,169,126,.10), transparent 55%);
+    pointer-events:none}
+  .card .lbl{font-size:13px;color:var(--muted);letter-spacing:.02em}
+  .count{display:flex;align-items:baseline;gap:6px;margin:6px 0 18px}
+  .count .b{font-size:52px;font-weight:800;line-height:1;color:var(--ink)}
+  .count .s{font-size:20px;color:var(--muted);font-weight:700}
+
+  /* شريط التقدم كأكواب */
+  .cups{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:6px}
+  .cup{width:26px;height:32px;border-radius:6px 6px 9px 9px;position:relative;
+    border:1.5px solid var(--secondary);opacity:.35;transition:.35s}
+  .cup.on{opacity:1;background:var(--secondary)}
+  .cup.on::before{content:"";position:absolute;inset:auto 4px 4px 4px;height:3px;
+    border-radius:2px;background:rgba(36,24,18,.35)}
+  .remain{font-size:13.5px;color:var(--secondary);margin-top:12px;font-weight:600}
+
+  /* الروليت */
+  .spin-zone{margin:26px 0;text-align:center}
+  .wheel-box{position:relative;width:260px;height:260px;margin:0 auto 18px}
+  .wheel{width:100%;height:100%;border-radius:50%;
+    border:6px solid var(--card2);box-shadow:0 0 0 3px var(--secondary),0 18px 40px -18px #000;
+    transition:transform 4.2s cubic-bezier(.15,.9,.2,1)}
+  .pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+    width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;
+    border-top:22px solid var(--ink);filter:drop-shadow(0 2px 3px rgba(0,0,0,.5));z-index:3}
+  .hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:54px;height:54px;border-radius:50%;background:var(--card2);
+    border:3px solid var(--secondary);z-index:2;display:grid;place-items:center;
+    font-size:22px}
+  .btn{appearance:none;border:0;border-radius:14px;padding:15px 20px;width:100%;
+    font-family:inherit;font-weight:800;font-size:16.5px;cursor:pointer;
+    background:var(--btn);color:#241812;transition:.15s;letter-spacing:.01em}
+  .btn:active{transform:scale(.98)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+
+  /* الأقسام */
+  h2{font-size:16px;margin:30px 0 12px;font-weight:800}
+  .list{display:flex;flex-direction:column;gap:10px}
+  .row{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .row .t{font-weight:700;font-size:15px}
+  .row .m{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .pill{font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;
+    background:rgba(127,183,126,.16);color:var(--ok);white-space:nowrap}
+  .empty{color:var(--muted);font-size:14px;text-align:center;padding:18px 0}
+
+  .install{margin-top:26px}
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140%);
+    background:#111;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;
+    transition:.3s;z-index:99;max-width:90%;text-align:center}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+  .toast.err{background:#8c2f2f}
+
+  /* التحقق */
+  .gate{position:fixed;inset:0;background:var(--bg);display:none;place-items:center;padding:24px;z-index:50}
+  .gate.show{display:grid}
+  .gate .card{max-width:360px;width:100%;text-align:center}
+  .otp{width:100%;font-family:inherit;font-size:26px;text-align:center;letter-spacing:8px;
+    background:var(--card2);border:1px solid var(--line);color:var(--ink);
+    border-radius:12px;padding:14px;margin:16px 0}
+  .loader{text-align:center;padding:80px 0;color:var(--muted)}
+  @media (prefers-reduced-motion:reduce){.wheel{transition:none}}
+</style>
+</head>
+<body>
+  <div id="app" class="wrap">
+    <div class="loader" id="loading">…جاري التحميل</div>
+    <div id="content" style="display:none"></div>
+  </div>
+
+  <!-- بوابة التحقق (تظهر مرة واحدة) -->
+  <div class="gate" id="gate">
+    <div class="card">
+      <div class="lbl">التحقق من رقمك</div>
+      <p style="color:var(--muted);font-size:14px;margin:10px 0 0">
+        اكتب الكود الذي وصلك على واتساب</p>
+      <input class="otp" id="otp" inputmode="numeric" maxlength="6" placeholder="------" />
+      <button class="btn" id="verifyBtn">تأكيد</button>
+    </div>
+  </div>
+
+<script type="module">
+import { callFn, hashParam, applyTheme, toast } from "./app.js";
+
+const token = hashParam("t");
+const $ = (s) => document.querySelector(s);
+let state = null;
+
+if (!token) {
+  $("#loading").textContent = "الرابط غير صالح. اطلب رابطك من الكافيه.";
+} else {
+  load();
+}
+
+async function load() {
+  try {
+    state = await callFn("customer-me", { magic_token: token });
+    applyTheme(state.cafe);
+    if (!state.customer.verified) { showGate(); }
+    render();
+  } catch (e) {
+    $("#loading").textContent = "تعذّر تحميل صفحتك. تأكد من الرابط.";
+  }
+}
+
+function showGate(){ $("#gate").classList.add("show"); }
+$("#verifyBtn").onclick = async () => {
+  const code = $("#otp").value.trim();
+  if (code.length < 4) return toast("اكتب الكود كاملاً", true);
+  try {
+    await callFn("verify-code", { magic_token: token, code });
+    $("#gate").classList.remove("show");
+    toast("تم التحقق ✓");
+    await load();
+  } catch (e) {
+    toast(e.message === "WRONG_CODE" ? "كود غير صحيح" :
+          e.message === "CODE_EXPIRED" ? "انتهت صلاحية الكود" : "تعذّر التحقق", true);
+  }
+};
+
+function render() {
+  const c = state, cafe = c.cafe || {};
+  const need = c.cups_per_reward || 10;
+  const bal = c.balance || 0;
+  const cups = Array.from({length: need}, (_, i) =>
+    `<div class="cup ${i < bal ? "on":""}"></div>`).join("");
+  const remain = Math.max(0, need - bal);
+
+  const rewards = (c.rewards||[]).map(r => `
+    <div class="row">
+      <div><div class="t">${r.label}</div>
+        <div class="m">${r.expires_at ? "تنتهي "+fmtDate(r.expires_at):"سارية"}</div></div>
+      <span class="pill">متاحة</span>
+    </div>`).join("") || `<div class="empty">لا توجد مكافآت بعد — استمر بالزيارة ☕</div>`;
+
+  const visits = (c.visits||[]).map(v => `
+    <div class="row">
+      <div><div class="t">${v.cups} ${v.cups==1?"كوب":"أكواب"}</div>
+        <div class="m">${fmtDateTime(v.occurred_at)}</div></div>
+    </div>`).join("") || `<div class="empty">لا زيارات بعد</div>`;
+
+  const canSpin = !!c.pending_spin_visit_id;
+
+  $("#content").innerHTML = `
+    <div class="top">
+      ${cafe.logo_url ? `<img class="logo" src="${cafe.logo_url}">` : `<div class="logo"></div>`}
+      <div class="hi">أهلًا بك<b>${c.customer.full_name || "عميلنا"}</b></div>
+    </div>
+
+    <div class="card">
+      <div class="lbl">رصيد الأكواب</div>
+      <div class="count"><span class="b">${bal}</span><span class="s">/ ${need}</span></div>
+      <div class="cups">${cups}</div>
+      <div class="remain">${remain===0 ? "🎉 مؤهل لكوب مجاني!" :
+        `باقٍ ${remain} ${remain==1?"كوب":"أكواب"} على كوبك المجاني`}</div>
+    </div>
+
+    <div class="spin-zone">
+      <div class="wheel-box">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
+        <div class="hub">🎡</div>
+      </div>
+      <button class="btn" id="spinBtn" ${canSpin?"":"disabled"}>
+        ${canSpin ? "🎯 العب الروليت" : "العب بعد زيارتك القادمة"}</button>
+    </div>
+
+    <h2>مكافآتي</h2>
+    <div class="list">${rewards}</div>
+
+    <h2>آخر الزيارات</h2>
+    <div class="list">${visits}</div>
+
+    <button class="btn ghost install" id="installBtn" style="display:none">
+      📲 أضف التطبيق للشاشة الرئيسية</button>
+  `;
+  $("#loading").style.display = "none";
+  $("#content").style.display = "block";
+
+  drawWheel();
+  if (canSpin) $("#spinBtn").onclick = doSpin;
+  setupInstall();
+}
+
+/* رسم خانات العجلة (شكل فقط — النتيجة من السيرفر) */
+let wheelPrizes = [];
+function drawWheel(labels) {
+  const seg = labels || wheelPrizes;
+  const n = Math.max(seg.length, 6);
+  const colors = ["#6F4E37","#C8A97E","#8a6a4d","#d9bd93","#5e4230","#b8946a"];
+  let g = "";
+  for (let i=0;i<n;i++){
+    const a0 = (360/n)*i, a1=(360/n)*(i+1);
+    g += `${colors[i%colors.length]} ${a0}deg ${a1}deg,`;
+  }
+  const w = $("#wheel");
+  if (w) w.style.background = `conic-gradient(${g.slice(0,-1)})`;
+}
+
+async function doSpin() {
+  const btn = $("#spinBtn"); btn.disabled = true; btn.textContent = "…جاري";
+  try {
+    const res = await callFn("spin", {
+      magic_token: token, visit_id: state.pending_spin_visit_id });
+    wheelPrizes = (res.wheel||[]).map(w=>w.label);
+    drawWheel(wheelPrizes);
+
+    // دوّر نحو الخانة الفائزة
+    const n = wheelPrizes.length || 6;
+    const idx = Math.max(0, wheelPrizes.indexOf(res.prize_label));
+    const segMid = (360/n)*idx + (360/n)/2;
+    const target = 360*6 + (360 - segMid); // عدة لفات + الاستقرار على الفائز
+    $("#wheel").style.transform = `rotate(${target}deg)`;
+
+    setTimeout(() => {
+      toast(res.prize_type==="none" ? `حظ أوفر: ${res.prize_label}` : `🎁 ربحت: ${res.prize_label}`);
+      load();
+    }, 4300);
+  } catch (e) {
+    if (e.message === "ALREADY_SPUN") toast("سبق اللعب على هذه الزيارة", true);
+    else toast("تعذّر اللعب", true);
+    btn.disabled = false; btn.textContent = "🎯 العب الروليت";
+  }
+}
+
+/* PWA install */
+let deferred;
+function setupInstall(){
+  const b = $("#installBtn");
+  if (deferred && b){ b.style.display="block"; b.onclick=async()=>{
+    b.style.display="none"; deferred.prompt(); await deferred.userChoice; deferred=null; }; }
+}
+window.addEventListener("beforeinstallprompt",(e)=>{e.preventDefault();deferred=e;setupInstall();});
+
+function fmtDate(s){return new Date(s).toLocaleDateString("ar-SA");}
+function fmtDateTime(s){return new Date(s).toLocaleString("ar-SA",{dateStyle:"medium",timeStyle:"short"});}
+
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
