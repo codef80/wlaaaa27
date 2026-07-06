@@ -146,36 +146,25 @@ $("#phone").oninput = () => { clearTimeout(t); currentCustomer=null; $("#found")
   $("#waBtn").style.display="none"; $("#result").classList.remove("show");
   $("#rewardBox").innerHTML=""; t=setTimeout(lookup, 500); };
 
-// بحث فقط (قراءة) — لا يُنشئ عميلًا. الإنشاء يتم عند اعتماد العملية.
+// بحث فقط عبر السيرفر (تطبيع موحّد، بدون إنشاء).
 async function lookup(){
   const phone=$("#phone").value.trim();
   const digits=phone.replace(/\D/g,"");
   if(digits.length < 9) return;
   try{
-    const norm = normalizePhone(phone);
-    const { data: c } = await sb.from("customers")
-      .select("id,full_name,magic_token")
-      .eq("cafe_id",cafeId).eq("phone",norm).maybeSingle();
-    if(c){
-      currentCustomer = { customer_id:c.id, full_name:c.full_name, magic_token:c.magic_token, existing:true };
-      if(c.full_name) $("#cname").value = c.full_name;
-      $("#found").textContent = `✓ عميل مسجّل: ${c.full_name||"—"}`;
-      loadRewards(c.id);
+    const r = await callFn("customer-upsert",
+      { cafe_id:cafeId, phone, search_only:true }, true);
+    if(r.found){
+      currentCustomer = { customer_id:r.customer_id, full_name:r.full_name, existing:true };
+      if(r.full_name) $("#cname").value = r.full_name;
+      $("#found").textContent = `✓ عميل مسجّل: ${r.full_name||"—"}`;
+      renderRewards(r.rewards||[]);
     }else{
       currentCustomer = null;
+      $("#rewardBox").innerHTML="";
       $("#found").textContent = "عميل جديد — اكتب الاسم (اختياري) ثم اعتمد العملية";
     }
   }catch(e){ /* صامت أثناء الكتابة */ }
-}
-
-// تطبيع الرقم للسعودية (نفس منطق السيرفر) — للبحث المحلي
-function normalizePhone(raw){
-  let p=(raw||"").replace(/[^\d+]/g,"");
-  if(p.startsWith("+")) p=p.slice(1);
-  if(p.startsWith("00")) p=p.slice(2);
-  if(p.startsWith("05")) p="966"+p.slice(1);
-  if(p.startsWith("5")&&p.length===9) p="966"+p;
-  return p;
 }
 
 $("#waBtn").onclick = () => {
@@ -212,13 +201,12 @@ $("#submitBtn").onclick = async () => {
       <div class="sub">العميل مؤهل للعب الروليت من صفحته</div>`;
     box.classList.add("show");
 
-    // 3) زر إرسال رابط العميل عبر واتساب ويب
+    // 3) زر إرسال رابط العميل عبر واتساب ويب (يظهر دائمًا بعد الاعتماد)
     const waBtn=$("#waBtn");
-    if(up.wa_link){
-      waBtn.dataset.link=up.wa_link;
-      waBtn.style.display="block";
-      waBtn.textContent="📲 إرسال رابط العميل عبر واتساب";
-    }
+    waBtn.dataset.link = up.wa_link || "";
+    waBtn.style.display = "block";
+    waBtn.textContent = "📲 إرسال رابط العميل عبر واتساب";
+    if(!up.wa_link) waBtn.style.display="none";  // لو غاب الرابط لأي سبب
 
     toast("تم الاعتماد");
     loadRewards(up.customer_id);
@@ -230,10 +218,8 @@ $("#submitBtn").onclick = async () => {
   }finally{ $("#submitBtn").disabled=false; }
 };
 
-// مكافآت جاهزة للاستخدام
-async function loadRewards(customerId){
-  const { data: rewards } = await sb.from("rewards")
-    .select("id,label").eq("customer_id",customerId).eq("status","available");
+// عرض قائمة مكافآت (تُستدعى من البحث أو بعد الاعتماد)
+function renderRewards(rewards){
   const box=$("#rewardBox"); box.innerHTML="";
   (rewards||[]).forEach(r=>{
     const d=document.createElement("div"); d.className="reward-chip";
@@ -245,6 +231,13 @@ async function loadRewards(customerId){
     };
     box.appendChild(d);
   });
+}
+
+// جلب المكافآت من القاعدة ثم عرضها (بعد اعتماد العملية)
+async function loadRewards(customerId){
+  const { data: rewards } = await sb.from("rewards")
+    .select("id,label").eq("customer_id",customerId).eq("status","available");
+  renderRewards(rewards||[]);
 }
 </script>
 </body>
