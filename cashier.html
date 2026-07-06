@@ -103,7 +103,7 @@
 </div>
 
 <script type="module">
-import { sb, callFn, toast } from "./app.js";
+import { sb, callFn, toast, applyBrand } from "./app.js";
 
 const $ = s => document.querySelector(s);
 let cafeId = null, currentCustomer = null;
@@ -133,6 +133,10 @@ async function initWork(){
     .select("cafe_id").eq("user_id", u.user.id).eq("is_active",true).limit(1).maybeSingle();
   if(!staff){ toast("حسابك غير مرتبط بكافيه", true); return; }
   cafeId = staff.cafe_id;
+  // هوية الكافيه (الألوان) — تطبّق على واجهة الكاشير
+  const { data: cafe } = await sb.from("cafes")
+    .select("color_primary,color_secondary,color_button").eq("id",cafeId).maybeSingle();
+  applyBrand(cafe);
   // الفروع
   const { data: branches } = await sb.from("branches")
     .select("id,name").eq("cafe_id",cafeId).eq("is_active",true);

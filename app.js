@@ -2,8 +2,8 @@
 // app.js — أدوات مشتركة لكل الصفحات
 // =============================================================
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { APP_CONFIG as cfg } from "./config.js";
 
+const cfg = window.APP_CONFIG;
 export const sb = createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
 
 // استدعاء Edge Function (يمرّر توكن الموظف إن وُجد)
@@ -40,6 +40,15 @@ export function applyTheme(cafe) {
   if (cafe.color_secondary)  r.setProperty("--secondary", cafe.color_secondary);
   if (cafe.color_background) r.setProperty("--bg", cafe.color_background);
   if (cafe.color_button)     r.setProperty("--btn", cafe.color_button);
+}
+
+// تطبيق هوية الكافيه على واجهات الموظف (بدون تغيير الخلفية الفاتحة)
+export function applyBrand(cafe) {
+  if (!cafe) return;
+  const r = document.documentElement.style;
+  if (cafe.color_primary)   r.setProperty("--primary", cafe.color_primary);
+  if (cafe.color_secondary) r.setProperty("--secondary", cafe.color_secondary);
+  if (cafe.color_button)    r.setProperty("--btn", cafe.color_button);
 }
 
 export function toast(msg, isError = false) {

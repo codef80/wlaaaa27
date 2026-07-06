@@ -212,7 +212,7 @@
 </div>
 
 <script type="module">
-import { sb, toast } from "./app.js";
+import { sb, toast, applyBrand } from "./app.js";
 const $ = s=>document.querySelector(s);
 let cafeId=null, cafe=null, prizes=[];
 
@@ -240,7 +240,7 @@ async function init(){
   if(!staff){ toast("هذا الحساب ليس صاحب كافيه",true); return; }
   cafeId=staff.cafe_id;
   const { data:c }=await sb.from("cafes").select("*").eq("id",cafeId).single();
-  cafe=c; $("#cafeName").textContent=c.name;
+  cafe=c; $("#cafeName").textContent=c.name; applyBrand(c);
   fillIdentity(); fillLoyalty(); await loadPrizes();
   // فترة افتراضية: آخر 30 يوم
   const to=new Date(), from=new Date(Date.now()-30*864e5);
@@ -265,7 +265,7 @@ $("#saveIdentity").onclick=async()=>{
     app_icon_url:$("#f_icon").value.trim()||null};
   const { error }=await sb.from("cafes").update(patch).eq("id",cafeId);
   if(error) return toast("تعذّر الحفظ",true);
-  Object.assign(cafe,patch); $("#cafeName").textContent=cafe.name; toast("تم حفظ الهوية");
+  Object.assign(cafe,patch); $("#cafeName").textContent=cafe.name; applyBrand(cafe); toast("تم حفظ الهوية");
 };
 
 /* الولاء */
