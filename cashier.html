@@ -77,9 +77,6 @@
       <label>اسم العميل (اختياري — لأول مرة)</label>
       <input id="cname" type="text" placeholder="اسم العميل" />
 
-      <button class="btn alt" id="waBtn" style="display:none">
-        📲 إرسال تحقق واتساب</button>
-
       <label>عدد الأكواب</label>
       <div class="cups-input">
         <button id="minus" type="button">−</button>
@@ -96,6 +93,10 @@
       <button class="btn" id="submitBtn">اعتماد العملية</button>
 
       <div class="result" id="result"></div>
+
+      <button class="btn alt" id="waBtn" style="display:none">
+        📲 إرسال رابط العميل عبر واتساب</button>
+
       <div id="rewardBox"></div>
     </div>
   </div>
@@ -142,22 +143,39 @@ async function initWork(){
 // بحث عن العميل عند كتابة الرقم (بعد توقف الكتابة)
 let t;
 $("#phone").oninput = () => { clearTimeout(t); currentCustomer=null; $("#found").textContent="";
-  $("#waBtn").style.display="none"; t=setTimeout(lookup, 500); };
+  $("#waBtn").style.display="none"; $("#result").classList.remove("show");
+  $("#rewardBox").innerHTML=""; t=setTimeout(lookup, 500); };
 
+// بحث فقط (قراءة) — لا يُنشئ عميلًا. الإنشاء يتم عند اعتماد العملية.
 async function lookup(){
   const phone=$("#phone").value.trim();
-  // لا تُنشئ عميلًا إلا عند رقم مكتمل (يقلّل الصفوف العشوائية)
-  if(phone.replace(/\D/g,"").length < 9) return;
+  const digits=phone.replace(/\D/g,"");
+  if(digits.length < 9) return;
   try{
-    const r = await callFn("customer-upsert",
-      { cafe_id:cafeId, phone, full_name:$("#cname").value.trim()||null }, true);
-    currentCustomer = r;
-    if(r.full_name) $("#cname").value = r.full_name;
-    if(r.verified){ $("#found").textContent = `✓ عميل مسجّل: ${r.full_name||"—"}`;
-      $("#waBtn").style.display="none"; loadRewards(r.customer_id); }
-    else { $("#found").textContent = "عميل جديد — أرسل التحقق أولاً";
-      $("#waBtn").style.display="block"; $("#waBtn").dataset.link = r.wa_link||""; }
+    const norm = normalizePhone(phone);
+    const { data: c } = await sb.from("customers")
+      .select("id,full_name,magic_token")
+      .eq("cafe_id",cafeId).eq("phone",norm).maybeSingle();
+    if(c){
+      currentCustomer = { customer_id:c.id, full_name:c.full_name, magic_token:c.magic_token, existing:true };
+      if(c.full_name) $("#cname").value = c.full_name;
+      $("#found").textContent = `✓ عميل مسجّل: ${c.full_name||"—"}`;
+      loadRewards(c.id);
+    }else{
+      currentCustomer = null;
+      $("#found").textContent = "عميل جديد — اكتب الاسم (اختياري) ثم اعتمد العملية";
+    }
   }catch(e){ /* صامت أثناء الكتابة */ }
+}
+
+// تطبيع الرقم للسعودية (نفس منطق السيرفر) — للبحث المحلي
+function normalizePhone(raw){
+  let p=(raw||"").replace(/[^\d+]/g,"");
+  if(p.startsWith("+")) p=p.slice(1);
+  if(p.startsWith("00")) p=p.slice(2);
+  if(p.startsWith("05")) p="966"+p.slice(1);
+  if(p.startsWith("5")&&p.length===9) p="966"+p;
+  return p;
 }
 
 $("#waBtn").onclick = () => {
@@ -170,24 +188,41 @@ $("#plus").onclick =()=>{const c=$("#cups");c.value=(+c.value||1)+1;};
 
 // اعتماد العملية
 $("#submitBtn").onclick = async () => {
-  if(!currentCustomer) return toast("ابحث عن العميل أولاً", true);
-  if(!currentCustomer.verified) return toast("العميل غير متحقق بعد", true);
+  const phone=$("#phone").value.trim();
+  if(phone.replace(/\D/g,"").length < 9) return toast("أدخل رقم جوال صحيح", true);
   const cups=+$("#cups").value||1;
   $("#submitBtn").disabled=true;
   try{
+    // 1) تأكد من وجود العميل (يُنشأ الآن إن كان جديدًا) ويرجّع رابط صفحته
+    const up = await callFn("customer-upsert",
+      { cafe_id:cafeId, phone, full_name:$("#cname").value.trim()||null }, true);
+    currentCustomer = up;
+
+    // 2) سجّل الزيارة وأضف الأكواب
     const res = await sb.rpc("add_visit",{
-      p_customer: currentCustomer.customer_id, p_cups: cups,
+      p_customer: up.customer_id, p_cups: cups,
       p_branch: $("#branch").value||null, p_note: $("#note").value.trim()||null });
     if(res.error) throw res.error;
     const d = res.data;
+
     const box=$("#result");
     box.innerHTML = `<div class="big">تمت إضافة ${cups} ${cups==1?"كوب":"أكواب"} ✓</div>
       <div class="sub">الرصيد الحالي: ${d.balance} من ${d.cups_per_reward}</div>
       ${d.free_cups_earned>0?`<div class="sub">🎉 استحق ${d.free_cups_earned} كوب مجاني!</div>`:""}
       <div class="sub">العميل مؤهل للعب الروليت من صفحته</div>`;
     box.classList.add("show");
+
+    // 3) زر إرسال رابط العميل عبر واتساب ويب
+    const waBtn=$("#waBtn");
+    if(up.wa_link){
+      waBtn.dataset.link=up.wa_link;
+      waBtn.style.display="block";
+      waBtn.textContent="📲 إرسال رابط العميل عبر واتساب";
+    }
+
     toast("تم الاعتماد");
-    loadRewards(currentCustomer.customer_id);
+    loadRewards(up.customer_id);
+    $("#found").textContent = `✓ ${up.full_name||"العميل"}`;
     $("#note").value="";
   }catch(e){
     const m = String(e.message||e);
