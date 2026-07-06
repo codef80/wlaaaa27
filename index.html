@@ -105,17 +105,6 @@
     <div id="content" style="display:none"></div>
   </div>
 
-  <!-- بوابة التحقق (تظهر مرة واحدة) -->
-  <div class="gate" id="gate">
-    <div class="card">
-      <div class="lbl">التحقق من رقمك</div>
-      <p style="color:var(--muted);font-size:14px;margin:10px 0 0">
-        اكتب الكود الذي وصلك على واتساب</p>
-      <input class="otp" id="otp" inputmode="numeric" maxlength="6" placeholder="------" />
-      <button class="btn" id="verifyBtn">تأكيد</button>
-    </div>
-  </div>
-
 <script type="module">
 import { callFn, hashParam, applyTheme, toast } from "./app.js";
 
@@ -133,27 +122,12 @@ async function load() {
   try {
     state = await callFn("customer-me", { magic_token: token });
     applyTheme(state.cafe);
-    if (!state.customer.verified) { showGate(); }
+    // التحقق موقوف — نعرض الصفحة مباشرة بدون بوابة كود
     render();
   } catch (e) {
     $("#loading").textContent = "تعذّر تحميل صفحتك. تأكد من الرابط.";
   }
 }
-
-function showGate(){ $("#gate").classList.add("show"); }
-$("#verifyBtn").onclick = async () => {
-  const code = $("#otp").value.trim();
-  if (code.length < 4) return toast("اكتب الكود كاملاً", true);
-  try {
-    await callFn("verify-code", { magic_token: token, code });
-    $("#gate").classList.remove("show");
-    toast("تم التحقق ✓");
-    await load();
-  } catch (e) {
-    toast(e.message === "WRONG_CODE" ? "كود غير صحيح" :
-          e.message === "CODE_EXPIRED" ? "انتهت صلاحية الكود" : "تعذّر التحقق", true);
-  }
-};
 
 function render() {
   const c = state, cafe = c.cafe || {};
