@@ -2,8 +2,9 @@
 // app.js — أدوات مشتركة لكل الصفحات
 // =============================================================
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { APP_CONFIG } from "./config.js";
 
-const cfg = window.APP_CONFIG;
+const cfg = APP_CONFIG;
 export const sb = createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
 
 // استدعاء Edge Function (يمرّر توكن الموظف إن وُجد)
