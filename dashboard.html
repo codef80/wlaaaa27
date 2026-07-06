@@ -50,6 +50,15 @@
   .toast.show{transform:translateX(-50%) translateY(0)}.toast.err{background:#8c2f2f}
   .login{max-width:360px;margin:60px auto}
   .row-actions{display:flex;gap:8px;margin-top:8px}
+  .quick{display:flex;gap:8px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;
+    padding:7px 14px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+  .chip:hover{border-color:var(--primary);color:var(--primary)}
+  .badge{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .badge.ok{background:rgba(47,125,79,.12);color:var(--ok)}
+  .badge.pend{background:#f3ece0;color:#9a7b4f}
+  .badge.laps{background:#f7e9e9;color:#b03636}
+  #customersTable td:first-child{font-weight:700}
   @media(max-width:560px){.prize-row{grid-template-columns:1fr 1fr;}.prize-row .pct{grid-column:1/-1}}
 </style>
 </head>
@@ -71,6 +80,7 @@
     </div>
     <div class="tabs">
       <button data-t="reports" class="on">التقارير</button>
+      <button data-t="customers">العملاء</button>
       <button data-t="identity">الهوية والألوان</button>
       <button data-t="loyalty">إعدادات الولاء</button>
       <button data-t="roulette">الروليت</button>
@@ -83,9 +93,63 @@
           <div><label>من</label><input type="date" id="rFrom"></div>
           <div><label>إلى</label><input type="date" id="rTo"></div>
           <button class="btn sm" id="runReport">تحديث</button>
+          <button class="btn ghost sm" id="exportReport">⬇ تصدير CSV</button>
+        </div>
+        <div class="quick" id="quickRanges" style="margin-top:12px">
+          <button class="chip" data-days="7">آخر 7 أيام</button>
+          <button class="chip" data-days="30">آخر 30 يوم</button>
+          <button class="chip" data-days="90">آخر 90 يوم</button>
+          <button class="chip" data-month="1">هذا الشهر</button>
         </div>
       </div>
       <div id="reportBody"><div class="card">اختر فترة واضغط تحديث.</div></div>
+    </div>
+
+    <!-- العملاء -->
+    <div class="panel" id="p-customers">
+      <div class="card">
+        <div style="display:flex;gap:10px;align-items:end;flex-wrap:wrap">
+          <div style="flex:1;min-width:180px">
+            <label>بحث (اسم أو جوال)</label>
+            <input id="cSearch" placeholder="اكتب للبحث...">
+          </div>
+          <div>
+            <label>الحالة</label>
+            <select id="cStatus">
+              <option value="all">الكل</option>
+              <option value="active">الفعّالون</option>
+              <option value="verified">المتحققون</option>
+              <option value="pending">غير مفعّل (رقم فقط)</option>
+              <option value="lapsed">منقطعون (+21 يوم)</option>
+            </select>
+          </div>
+          <div>
+            <label>الترتيب</label>
+            <select id="cSort">
+              <option value="recent">الأحدث زيارة</option>
+              <option value="visits">الأكثر زيارة</option>
+              <option value="balance">الأعلى رصيدًا</option>
+              <option value="name">الاسم (أ-ي)</option>
+            </select>
+          </div>
+          <button class="btn sm" id="loadCustomers">عرض</button>
+          <button class="btn ghost sm" id="exportCustomers">⬇ تصدير CSV</button>
+        </div>
+        <div id="cCount" style="color:var(--muted);font-size:13px;margin-top:10px"></div>
+      </div>
+      <div class="card" style="padding:0;overflow:auto">
+        <table id="customersTable">
+          <thead><tr>
+            <th>الاسم</th><th>الجوال</th><th>الرصيد</th>
+            <th>الزيارات</th><th>الأكواب</th><th>مكافآت</th>
+            <th>آخر زيارة</th><th>الحالة</th>
+          </tr></thead>
+          <tbody id="customersBody">
+            <tr><td colspan="8" style="color:var(--muted);text-align:center;padding:24px">
+              اضغط «عرض» لجلب العملاء.</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- الهوية -->
@@ -124,6 +188,8 @@
           <div><label>صلاحية المكافآت (أيام)</label><input type="number" id="f_valid" min="1"></div>
           <div><label>الكوب المجاني يحتاج اعتماد موظف</label>
             <select id="f_approval"><option value="true">نعم</option><option value="false">لا</option></select></div>
+          <div><label>فرض تحقق واتساب قبل التسجيل (مستقبلي)</label>
+            <select id="f_reqverify"><option value="false">لا</option><option value="true">نعم</option></select></div>
         </div>
         <button class="btn" id="saveLoyalty" style="margin-top:16px">حفظ إعدادات الولاء</button>
       </div>
@@ -207,12 +273,14 @@ function fillLoyalty(){
   $("#f_need").value=cafe.cups_per_reward; $("#f_mode").value=cafe.count_mode;
   $("#f_daily").value=cafe.daily_cup_limit||""; $("#f_valid").value=cafe.reward_valid_days;
   $("#f_approval").value=String(cafe.free_cup_needs_staff_approval);
+  $("#f_reqverify").value=String(cafe.require_verification||false);
 }
 $("#saveLoyalty").onclick=async()=>{
   const patch={cups_per_reward:+$("#f_need").value||10,count_mode:$("#f_mode").value,
     daily_cup_limit:$("#f_daily").value?+$("#f_daily").value:null,
     reward_valid_days:+$("#f_valid").value||30,
-    free_cup_needs_staff_approval:$("#f_approval").value==="true"};
+    free_cup_needs_staff_approval:$("#f_approval").value==="true",
+    require_verification:$("#f_reqverify").value==="true"};
   const { error }=await sb.from("cafes").update(patch).eq("id",cafeId);
   if(error) return toast("تعذّر الحفظ",true);
   Object.assign(cafe,patch); toast("تم حفظ إعدادات الولاء");
@@ -263,14 +331,131 @@ $("#savePrizes").onclick=async()=>{
 
 /* التقارير */
 $("#runReport").onclick=runReport;
+let lastReport=null;
 async function runReport(){
   const from=new Date($("#rFrom").value+"T00:00:00");
   const to=new Date($("#rTo").value+"T23:59:59");
   const { data,error }=await sb.rpc("report_overview",
     {p_cafe:cafeId,p_from:from.toISOString(),p_to:to.toISOString()});
   if(error) return toast("تعذّر جلب التقرير",true);
-  renderReport(data);
+  lastReport=data; renderReport(data);
 }
+
+/* نطاقات سريعة */
+document.querySelectorAll("#quickRanges .chip").forEach(b=>b.onclick=()=>{
+  const to=new Date();
+  let from;
+  if(b.dataset.month){ from=new Date(to.getFullYear(),to.getMonth(),1); }
+  else { from=new Date(Date.now()-(+b.dataset.days)*864e5); }
+  $("#rTo").value=to.toISOString().slice(0,10);
+  $("#rFrom").value=from.toISOString().slice(0,10);
+  runReport();
+});
+
+/* أداة تصدير CSV مشتركة (تدعم العربية عبر BOM) */
+function downloadCSV(filename, rows){
+  const esc=v=>{ v=(v==null?"":String(v));
+    return /[",\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; };
+  const csv=rows.map(r=>r.map(esc).join(",")).join("\r\n");
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=filename; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+$("#exportReport").onclick=()=>{
+  if(!lastReport) return toast("حدّث التقرير أولاً",true);
+  const d=lastReport, t=d.totals, ri=d.roulette_impact||{};
+  const rows=[];
+  const range=`${$("#rFrom").value} إلى ${$("#rTo").value}`;
+  rows.push(["تقرير كافيه",cafe.name,"الفترة",range]);
+  rows.push([]);
+  rows.push(["الملخص",""]);
+  rows.push(["إجمالي العملاء",t.customers]);
+  rows.push(["عملاء جدد",t.new_customers]);
+  rows.push(["عملاء عائدون",t.returning_customers]);
+  rows.push(["الزيارات",t.visits]);
+  rows.push(["الأكواب",t.cups]);
+  rows.push(["متوسط الأكواب/زيارة",t.avg_cups_per_visit]);
+  rows.push(["متوسط زيارات اللاعبين",ri.spinners_avg_visits||0]);
+  rows.push(["متوسط زيارات غير اللاعبين",ri.non_spinners_avg_visits||0]);
+  rows.push([]);
+  rows.push(["الزيارات حسب اليوم",""]); rows.push(["اليوم","زيارات"]);
+  (d.by_weekday||[]).forEach(x=>rows.push([WD[x.day],x.visits]));
+  rows.push([]);
+  rows.push(["الزيارات حسب الفترة",""]); rows.push(["الفترة","زيارات"]);
+  (d.by_time_bucket||[]).forEach(x=>rows.push([x.bucket,x.visits]));
+  rows.push([]);
+  rows.push(["الزيارات حسب أيام الشهر",""]); rows.push(["المجموعة","زيارات"]);
+  (d.by_month_bucket||[]).forEach(x=>rows.push([x.bucket,x.visits]));
+  rows.push([]);
+  rows.push(["الزيارات حسب التاريخ",""]); rows.push(["التاريخ","زيارات"]);
+  (d.by_date||[]).forEach(x=>rows.push([x.date,x.visits]));
+  rows.push([]);
+  rows.push(["أكثر العملاء ولاءً",""]); rows.push(["الاسم","الجوال","الزيارات","الأكواب"]);
+  (d.top_customers||[]).forEach(c=>rows.push([c.full_name||"—",c.phone,c.visits,c.cups]));
+  rows.push([]);
+  rows.push(["العملاء المنقطعون",""]); rows.push(["الاسم","الجوال","آخر زيارة"]);
+  (d.lapsed_customers||[]).forEach(c=>rows.push([c.full_name||"—",c.phone,
+    c.last_visit_at?new Date(c.last_visit_at).toISOString().slice(0,10):""]));
+  rows.push([]);
+  rows.push(["الجوائز الأكثر استخدامًا",""]); rows.push(["الجائزة","مرات الاستخدام"]);
+  (d.top_rewards||[]).forEach(x=>rows.push([x.label,x.used]));
+  downloadCSV(`تقرير-${cafe.name}-${$("#rFrom").value}_${$("#rTo").value}.csv`,rows);
+  toast("تم تصدير التقرير");
+};
+
+/* العملاء */
+let lastCustomers=[];
+const statusBadge=(c)=>{
+  if(c.last_visit_at && new Date(c.last_visit_at) < new Date(Date.now()-21*864e5))
+    return `<span class="badge laps">منقطع</span>`;
+  if(c.verified) return `<span class="badge ok">متحقق</span>`;
+  if(c.is_active) return `<span class="badge ok">فعّال</span>`;
+  return `<span class="badge pend">رقم فقط</span>`;
+};
+async function loadCustomers(){
+  const { data,error }=await sb.rpc("list_customers",{
+    p_cafe:cafeId, p_status:$("#cStatus").value,
+    p_search:$("#cSearch").value.trim()||null, p_sort:$("#cSort").value,
+    p_limit:1000, p_offset:0 });
+  if(error){ toast("تعذّر جلب العملاء",true); return; }
+  lastCustomers=data||[];
+  $("#cCount").textContent=`${lastCustomers.length} عميل`;
+  const body=$("#customersBody");
+  if(!lastCustomers.length){
+    body.innerHTML=`<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:24px">لا نتائج</td></tr>`;
+    return;
+  }
+  body.innerHTML=lastCustomers.map(c=>`<tr>
+    <td>${c.full_name||"—"}</td>
+    <td>${c.phone}</td>
+    <td>${c.balance}</td>
+    <td>${c.visits_count}</td>
+    <td>${c.cups_total}</td>
+    <td>${c.rewards_available}</td>
+    <td>${c.last_visit_at?new Date(c.last_visit_at).toLocaleDateString("ar-SA"):"—"}</td>
+    <td>${statusBadge(c)}</td>
+  </tr>`).join("");
+}
+$("#loadCustomers").onclick=loadCustomers;
+$("#cStatus").onchange=loadCustomers;
+$("#cSort").onchange=loadCustomers;
+let cst; $("#cSearch").oninput=()=>{clearTimeout(cst);cst=setTimeout(loadCustomers,400);};
+
+$("#exportCustomers").onclick=()=>{
+  if(!lastCustomers.length) return toast("اعرض العملاء أولاً",true);
+  const rows=[["الاسم","الجوال","الرصيد","الزيارات","الأكواب","مكافآت متاحة","آخر زيارة","الحالة"]];
+  lastCustomers.forEach(c=>rows.push([
+    c.full_name||"", c.phone, c.balance, c.visits_count, c.cups_total,
+    c.rewards_available,
+    c.last_visit_at?new Date(c.last_visit_at).toISOString().slice(0,10):"",
+    c.verified?"متحقق":(c.is_active?"فعّال":"رقم فقط")
+  ]));
+  downloadCSV(`عملاء-${cafe.name}-${new Date().toISOString().slice(0,10)}.csv`,rows);
+  toast("تم تصدير العملاء");
+};
 const WD=["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
 function bars(items,labelKey,valKey,mapLabel){
   const max=Math.max(1,...items.map(x=>x[valKey]));
