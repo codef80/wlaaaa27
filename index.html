@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head> 
+<head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>محفظة الولاء</title>
@@ -8,245 +8,376 @@
 <meta name="theme-color" content="#241812" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --primary:#6F4E37; --secondary:#C8A97E; --bg:#241812; --btn:#C8A97E;
-    --card:#2f2018; --card2:#38271d; --ink:#F5EDE3; --muted:#B79E8A;
-    --ok:#7FB77E; --line:rgba(245,237,227,.10);
+    --card:#2f2018; --ink:#F5EDE3; --muted:#B79E8A;
+    --ok:#7FB77E; --line:rgba(245,237,227,.12);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{
-    margin:0;font-family:Tajawal,system-ui,sans-serif;background:var(--bg);
-    color:var(--ink);min-height:100dvh;
+    margin:0;font-family:Tajawal,system-ui,sans-serif;color:var(--ink);
+    min-height:100dvh;
     padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
-    background-image:radial-gradient(120% 80% at 50% -10%, rgba(200,169,126,.14), transparent 60%);
+    background:
+      radial-gradient(circle at top right, color-mix(in srgb, var(--secondary) 30%, transparent), transparent 40%),
+      radial-gradient(circle at bottom left, color-mix(in srgb, var(--primary) 22%, transparent), transparent 42%),
+      var(--bg);
   }
-  .wrap{max-width:480px;margin:0 auto;padding:20px 18px 40px}
-  .top{display:flex;align-items:center;gap:12px;margin-bottom:22px}
-  .logo{width:44px;height:44px;border-radius:13px;object-fit:cover;
-    background:var(--card);border:1px solid var(--line)}
-  .hi{font-size:14px;color:var(--muted);line-height:1.2}
-  .hi b{display:block;font-size:19px;color:var(--ink);font-weight:800;margin-top:2px}
+  .wrap{width:min(520px,calc(100% - 24px));margin:0 auto;padding:18px 0 40px}
 
-  /* البطاقة الكبيرة */
-  .card{background:linear-gradient(160deg,var(--card2),var(--card));
-    border:1px solid var(--line);border-radius:24px;padding:24px 22px;
-    box-shadow:0 20px 40px -24px rgba(0,0,0,.7);position:relative;overflow:hidden}
-  .card::after{content:"";position:absolute;inset:0;
-    background:radial-gradient(80% 60% at 85% 0%, rgba(200,169,126,.10), transparent 55%);
-    pointer-events:none}
-  .card .lbl{font-size:13px;color:var(--muted);letter-spacing:.02em}
-  .count{display:flex;align-items:baseline;gap:6px;margin:6px 0 18px}
-  .count .b{font-size:52px;font-weight:800;line-height:1;color:var(--ink)}
-  .count .s{font-size:20px;color:var(--muted);font-weight:700}
+  .hero{position:relative;overflow:hidden;border-radius:32px;padding:24px;color:#fff;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    box-shadow:0 22px 55px rgba(0,0,0,.35);margin-bottom:16px}
+  .hero::after{content:"";position:absolute;width:210px;height:210px;border-radius:999px;
+    background:rgba(255,255,255,.12);left:-80px;top:-70px}
+  .hero-top{position:relative;z-index:1;display:flex;align-items:center;gap:12px}
+  .logo{width:56px;height:56px;border-radius:20px;background:rgba(255,255,255,.18);
+    display:grid;place-items:center;font-size:26px;overflow:hidden;flex:0 0 auto}
+  .logo img{width:100%;height:100%;object-fit:cover}
+  .m-title{font-size:21px;font-weight:900;margin:0}
+  .m-sub{margin:3px 0 0;opacity:.85;font-size:13px}
+  .welcome{position:relative;z-index:1;margin-top:20px}
+  .welcome p{opacity:.88;margin:0 0 4px;font-size:14px}
+  .welcome h1{color:#fff;font-size:30px;margin:0;font-weight:900}
+  .install-btn{margin-top:16px;background:rgba(255,255,255,.18);
+    border:1px solid rgba(255,255,255,.28);color:#fff;padding:11px 16px;border-radius:14px;
+    font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
 
-  /* شريط التقدم كأكواب */
-  .cups{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:6px}
-  .cup{width:26px;height:32px;border-radius:6px 6px 9px 9px;position:relative;
-    border:1.5px solid var(--secondary);opacity:.35;transition:.35s}
+  .card{background:color-mix(in srgb,var(--card) 92%, #fff 8%);
+    border:1px solid var(--line);border-radius:28px;padding:22px;
+    box-shadow:0 18px 40px -24px rgba(0,0,0,.6);margin-bottom:16px}
+  .card h2{font-size:17px;margin:0 0 6px;font-weight:800}
+  .muted{color:var(--muted);line-height:1.8;margin:0}
+
+  .loy-num{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-bottom:16px}
+  .loy-num .lbl{color:var(--muted);font-size:13px;font-weight:700}
+  .loy-num strong{font-size:52px;line-height:.9;color:var(--secondary);display:block;margin-top:4px}
+  .loy-num .total{text-align:left}
+  .loy-num .total strong{font-size:32px;color:var(--ink)}
+
+  .progress{height:12px;border-radius:999px;background:rgba(0,0,0,.25);overflow:hidden}
+  .progress span{display:block;height:100%;border-radius:999px;
+    background:linear-gradient(90deg,var(--secondary),#fff);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+  .cups-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+  .cup{width:24px;height:30px;border-radius:6px 6px 9px 9px;border:1.5px solid var(--secondary);
+    opacity:.32;transition:.35s;position:relative}
   .cup.on{opacity:1;background:var(--secondary)}
   .cup.on::before{content:"";position:absolute;inset:auto 4px 4px 4px;height:3px;
     border-radius:2px;background:rgba(36,24,18,.35)}
-  .remain{font-size:13.5px;color:var(--secondary);margin-top:12px;font-weight:600}
+  .remain{font-size:13.5px;color:var(--secondary);margin-top:12px;font-weight:700}
 
-  /* الروليت */
-  .spin-zone{margin:26px 0;text-align:center}
-  .wheel-box{position:relative;width:260px;height:260px;margin:0 auto 18px}
-  .wheel{width:100%;height:100%;border-radius:50%;
-    border:6px solid var(--card2);box-shadow:0 0 0 3px var(--secondary),0 18px 40px -18px #000;
-    transition:transform 4.2s cubic-bezier(.15,.9,.2,1)}
-  .pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);
-    width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;
-    border-top:22px solid var(--ink);filter:drop-shadow(0 2px 3px rgba(0,0,0,.5));z-index:3}
-  .hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-    width:54px;height:54px;border-radius:50%;background:var(--card2);
-    border:3px solid var(--secondary);z-index:2;display:grid;place-items:center;
-    font-size:22px}
-  .btn{appearance:none;border:0;border-radius:14px;padding:15px 20px;width:100%;
-    font-family:inherit;font-weight:800;font-size:16.5px;cursor:pointer;
-    background:var(--btn);color:#241812;transition:.15s;letter-spacing:.01em}
+  .roulette{text-align:center;overflow:hidden}
+  .wheel-shell{width:min(320px,84vw);height:min(320px,84vw);margin:16px auto 20px;
+    position:relative;filter:drop-shadow(0 24px 34px rgba(0,0,0,.32))}
+  .wheel-stage{position:absolute;inset:-16px;border-radius:50%;z-index:0;
+    background:
+      radial-gradient(circle at 35% 28%, rgba(255,255,255,.85), transparent 12%),
+      linear-gradient(135deg, color-mix(in srgb,var(--secondary) 80%,#fff), var(--primary));
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,.35),0 22px 50px rgba(0,0,0,.35)}
+  .wheel-stage::before{content:"";position:absolute;inset:11px;border-radius:50%;
+    border:2px dashed rgba(255,255,255,.4)}
+  .wheel-pointer{position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+    width:50px;height:58px;z-index:8;filter:drop-shadow(0 8px 10px rgba(0,0,0,.3))}
+  .wheel-pointer::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:42px;height:42px;border-radius:15px 15px 22px 22px;
+    background:linear-gradient(135deg,#fff,color-mix(in srgb,var(--secondary) 42%,#fff));
+    border:2px solid rgba(255,255,255,.85)}
+  .wheel-pointer::after{content:"";position:absolute;top:32px;left:50%;transform:translateX(-50%);
+    width:0;height:0;border-left:14px solid transparent;border-right:14px solid transparent;
+    border-top:26px solid #fff}
+  .wheel{position:relative;z-index:2;width:100%;height:100%;border-radius:50%;
+    border:12px solid rgba(255,255,255,.94);overflow:hidden;
+    background:conic-gradient(var(--primary),var(--secondary),var(--primary));
+    transition:transform 4.6s cubic-bezier(.08,.84,.13,1);
+    box-shadow:inset 0 0 0 2px rgba(255,255,255,.5),inset 0 0 34px rgba(0,0,0,.18),0 16px 32px rgba(0,0,0,.28)}
+  .wheel::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:2;
+    background:radial-gradient(circle at 34% 26%, rgba(255,255,255,.32),transparent 20%),
+              radial-gradient(circle at 70% 76%, rgba(0,0,0,.16),transparent 24%)}
+  .wheel-labels{position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:3}
+  .wheel-label{position:absolute;top:50%;left:50%;width:90px;min-height:32px;
+    margin-left:-45px;margin-top:-16px;display:grid;place-items:center;text-align:center;
+    color:#fff;font-weight:900;font-size:12px;line-height:1.25;
+    text-shadow:0 2px 6px rgba(0,0,0,.5);padding:3px 4px}
+  .wheel-center{position:absolute;z-index:5;width:80px;height:80px;border-radius:50%;top:50%;left:50%;
+    transform:translate(-50%,-50%);display:grid;place-items:center;font-size:32px;
+    background:radial-gradient(circle at 35% 28%,#fff,#f5eadf 48%,color-mix(in srgb,var(--secondary) 72%,#fff));
+    border:6px solid rgba(255,255,255,.92);box-shadow:0 10px 20px rgba(0,0,0,.28)}
+  .wheel-lamps{position:absolute;inset:-6px;border-radius:50%;z-index:6;pointer-events:none}
+  .wheel-lamp{position:absolute;top:50%;left:50%;width:9px;height:9px;margin:-4.5px;border-radius:50%;
+    background:rgba(255,255,255,.95);box-shadow:0 0 10px rgba(255,255,255,.9);transition:opacity .15s}
+  .wheel.is-spinning .wheel-lamp:nth-child(odd){animation:lampBlink .4s linear infinite}
+  .wheel.is-spinning .wheel-lamp:nth-child(even){animation:lampBlink .4s linear infinite reverse}
+  @keyframes lampBlink{0%,100%{opacity:1}50%{opacity:.3}}
+
+  .btn{appearance:none;border:0;border-radius:16px;padding:16px 20px;width:100%;
+    font-family:inherit;font-weight:900;font-size:16.5px;cursor:pointer;
+    background:var(--btn);color:#241812;transition:.15s}
   .btn:active{transform:scale(.98)}
-  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
   .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
 
-  /* الأقسام */
-  h2{font-size:16px;margin:30px 0 12px;font-weight:800}
-  .list{display:flex;flex-direction:column;gap:10px}
-  .row{background:var(--card);border:1px solid var(--line);border-radius:14px;
-    padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .row .t{font-weight:700;font-size:15px}
+  .result{display:none;margin-top:14px;border-radius:20px;padding:16px;
+    font-weight:900;line-height:1.8;border:1px solid rgba(127,183,126,.25);
+    background:rgba(127,183,126,.12);color:var(--ok)}
+  .result.show{display:block;animation:pop .4s ease}
+  @keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+
+  .list{display:grid;gap:10px;margin-top:14px}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:14px;border-radius:16px;background:rgba(0,0,0,.18);border:1px solid var(--line)}
+  .row .t{font-weight:800;font-size:15px}
   .row .m{font-size:12.5px;color:var(--muted);margin-top:3px}
   .pill{font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;
-    background:rgba(127,183,126,.16);color:var(--ok);white-space:nowrap}
-  .empty{color:var(--muted);font-size:14px;text-align:center;padding:18px 0}
+    background:rgba(127,183,126,.18);color:var(--ok);white-space:nowrap}
+  .empty{padding:16px;border-radius:16px;background:rgba(0,0,0,.18);
+    color:var(--muted);text-align:center;line-height:1.8}
 
-  .install{margin-top:26px}
+  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;
+    padding:18px;place-items:center}
+  .modal.show{display:grid}
+  .modal-card{width:min(420px,100%);background:var(--card);border:1px solid var(--line);
+    border-radius:24px;padding:22px;box-shadow:0 22px 60px rgba(0,0,0,.4)}
+  .modal-card ol{line-height:2;padding-right:22px;color:var(--muted)}
+
   .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(140%);
     background:#111;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;
     transition:.3s;z-index:99;max-width:90%;text-align:center}
   .toast.show{transform:translateX(-50%) translateY(0)}
   .toast.err{background:#8c2f2f}
-
-  /* التحقق */
-  .gate{position:fixed;inset:0;background:var(--bg);display:none;place-items:center;padding:24px;z-index:50}
-  .gate.show{display:grid}
-  .gate .card{max-width:360px;width:100%;text-align:center}
-  .otp{width:100%;font-family:inherit;font-size:26px;text-align:center;letter-spacing:8px;
-    background:var(--card2);border:1px solid var(--line);color:var(--ink);
-    border-radius:12px;padding:14px;margin:16px 0}
   .loader{text-align:center;padding:80px 0;color:var(--muted)}
   @media (prefers-reduced-motion:reduce){.wheel{transition:none}}
 </style>
 </head>
 <body>
-  <div id="app" class="wrap">
-    <div class="loader" id="loading">…جاري التحميل</div>
+  <main class="wrap">
+    <div class="loader" id="loading">…جاري تحميل صفحتك</div>
     <div id="content" style="display:none"></div>
+  </main>
+
+  <div class="modal" id="installModal">
+    <div class="modal-card">
+      <h2 style="margin-top:0">إضافة الصفحة للشاشة الرئيسية</h2>
+      <div id="installSteps" class="muted"></div>
+      <button class="btn" id="closeInstall" style="margin-top:14px">تم</button>
+    </div>
   </div>
 
 <script type="module">
 import { callFn, hashParam, applyTheme, toast } from "./app.js";
 
 const token = hashParam("t");
-const $ = (s) => document.querySelector(s);
-let state = null;
+const $ = (s)=>document.querySelector(s);
+let state=null, wheelPrizes=[], currentRotation=0;
 
-if (!token) {
-  $("#loading").textContent = "الرابط غير صالح. اطلب رابطك من الكافيه.";
-} else {
-  load();
-}
+if(!token){ $("#loading").textContent="الرابط غير صالح. اطلب رابطك من الكافيه."; }
+else load();
 
-async function load() {
-  try {
+async function load(){
+  try{
     state = await callFn("customer-me", { magic_token: token });
     applyTheme(state.cafe);
-    // التحقق موقوف — نعرض الصفحة مباشرة بدون بوابة كود
     render();
-  } catch (e) {
-    $("#loading").textContent = "تعذّر تحميل صفحتك. تأكد من الرابط.";
-  }
+  }catch(e){ $("#loading").textContent="تعذّر تحميل صفحتك. تأكد من الرابط."; }
 }
-
-function render() {
-  const c = state, cafe = c.cafe || {};
-  const need = c.cups_per_reward || 10;
-  const bal = c.balance || 0;
-  const cups = Array.from({length: need}, (_, i) =>
-    `<div class="cup ${i < bal ? "on":""}"></div>`).join("");
-  const remain = Math.max(0, need - bal);
-
-  const rewards = (c.rewards||[]).map(r => `
-    <div class="row">
-      <div><div class="t">${r.label}</div>
-        <div class="m">${r.expires_at ? "تنتهي "+fmtDate(r.expires_at):"سارية"}</div></div>
-      <span class="pill">متاحة</span>
-    </div>`).join("") || `<div class="empty">لا توجد مكافآت بعد — استمر بالزيارة ☕</div>`;
-
-  const visits = (c.visits||[]).map(v => `
-    <div class="row">
-      <div><div class="t">${v.cups} ${v.cups==1?"كوب":"أكواب"}</div>
-        <div class="m">${fmtDateTime(v.occurred_at)}</div></div>
-    </div>`).join("") || `<div class="empty">لا زيارات بعد</div>`;
-
-  const canSpin = !!c.pending_spin_visit_id;
-
-  $("#content").innerHTML = `
-    <div class="top">
-      ${cafe.logo_url ? `<img class="logo" src="${cafe.logo_url}">` : `<div class="logo"></div>`}
-      <div class="hi">أهلًا بك<b>${c.customer.full_name || "عميلنا"}</b></div>
-    </div>
-
-    <div class="card">
-      <div class="lbl">رصيد الأكواب</div>
-      <div class="count"><span class="b">${bal}</span><span class="s">/ ${need}</span></div>
-      <div class="cups">${cups}</div>
-      <div class="remain">${remain===0 ? "🎉 مؤهل لكوب مجاني!" :
-        `باقٍ ${remain} ${remain==1?"كوب":"أكواب"} على كوبك المجاني`}</div>
-    </div>
-
-    <div class="spin-zone">
-      <div class="wheel-box">
-        <div class="pointer"></div>
-        <div class="wheel" id="wheel"></div>
-        <div class="hub">🎡</div>
-      </div>
-      <button class="btn" id="spinBtn" ${canSpin?"":"disabled"}>
-        ${canSpin ? "🎯 العب الروليت" : "العب بعد زيارتك القادمة"}</button>
-    </div>
-
-    <h2>مكافآتي</h2>
-    <div class="list">${rewards}</div>
-
-    <h2>آخر الزيارات</h2>
-    <div class="list">${visits}</div>
-
-    <button class="btn ghost install" id="installBtn" style="display:none">
-      📲 أضف التطبيق للشاشة الرئيسية</button>
-  `;
-  $("#loading").style.display = "none";
-  $("#content").style.display = "block";
-
-  drawWheel();
-  if (canSpin) $("#spinBtn").onclick = doSpin;
-  setupInstall();
-}
-
-/* رسم خانات العجلة (شكل فقط — النتيجة من السيرفر) */
-let wheelPrizes = [];
-function drawWheel(labels) {
-  const seg = labels || wheelPrizes;
-  const n = Math.max(seg.length, 6);
-  const colors = ["#6F4E37","#C8A97E","#8a6a4d","#d9bd93","#5e4230","#b8946a"];
-  let g = "";
-  for (let i=0;i<n;i++){
-    const a0 = (360/n)*i, a1=(360/n)*(i+1);
-    g += `${colors[i%colors.length]} ${a0}deg ${a1}deg,`;
-  }
-  const w = $("#wheel");
-  if (w) w.style.background = `conic-gradient(${g.slice(0,-1)})`;
-}
-
-async function doSpin() {
-  const btn = $("#spinBtn"); btn.disabled = true; btn.textContent = "…جاري";
-  try {
-    const res = await callFn("spin", {
-      magic_token: token, visit_id: state.pending_spin_visit_id });
-    wheelPrizes = (res.wheel||[]).map(w=>w.label);
-    drawWheel(wheelPrizes);
-
-    // دوّر نحو الخانة الفائزة
-    const n = wheelPrizes.length || 6;
-    const idx = Math.max(0, wheelPrizes.indexOf(res.prize_label));
-    const segMid = (360/n)*idx + (360/n)/2;
-    const target = 360*6 + (360 - segMid); // عدة لفات + الاستقرار على الفائز
-    $("#wheel").style.transform = `rotate(${target}deg)`;
-
-    setTimeout(() => {
-      toast(res.prize_type==="none" ? `حظ أوفر: ${res.prize_label}` : `🎁 ربحت: ${res.prize_label}`);
-      load();
-    }, 4300);
-  } catch (e) {
-    if (e.message === "ALREADY_SPUN") toast("سبق اللعب على هذه الزيارة", true);
-    else toast("تعذّر اللعب", true);
-    btn.disabled = false; btn.textContent = "🎯 العب الروليت";
-  }
-}
-
-/* PWA install */
-let deferred;
-function setupInstall(){
-  const b = $("#installBtn");
-  if (deferred && b){ b.style.display="block"; b.onclick=async()=>{
-    b.style.display="none"; deferred.prompt(); await deferred.userChoice; deferred=null; }; }
-}
-window.addEventListener("beforeinstallprompt",(e)=>{e.preventDefault();deferred=e;setupInstall();});
 
 function fmtDate(s){return new Date(s).toLocaleDateString("ar-SA");}
 function fmtDateTime(s){return new Date(s).toLocaleString("ar-SA",{dateStyle:"medium",timeStyle:"short"});}
 
-if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+function render(){
+  const c=state, cafe=c.cafe||{};
+  const need=c.cups_per_reward||10, bal=c.balance||0;
+  const total=(c.visits||[]).reduce((s,v)=>s+(v.cups||0),0);
+  const remain=Math.max(0,need-bal);
+  const percent=Math.min(100,Math.round((bal/need)*100));
+
+  const cups=Array.from({length:need},(_,i)=>`<div class="cup ${i<bal?"on":""}"></div>`).join("");
+
+  const rewards=(c.rewards||[]).map(r=>`
+    <div class="row">
+      <div><div class="t">🎁 ${r.label}</div>
+        <div class="m">${r.expires_at?"تنتهي "+fmtDate(r.expires_at):"سارية"}</div></div>
+      <span class="pill">متاحة</span>
+    </div>`).join("") || `<div class="empty">لا توجد مكافآت بعد — استمر بالزيارة ☕</div>`;
+
+  const visits=(c.visits||[]).slice(0,3).map(v=>`
+    <div class="row">
+      <div><div class="t">${v.cups} ${v.cups==1?"كوب":"أكواب"}</div>
+        <div class="m">${fmtDateTime(v.occurred_at)}</div></div>
+      <span class="pill">شراء</span>
+    </div>`).join("") || `<div class="empty">لا زيارات بعد</div>`;
+
+  const canSpin=!!c.pending_spin_visit_id;
+
+  $("#content").innerHTML=`
+    <section class="hero">
+      <div class="hero-top">
+        <div class="logo">${cafe.logo_url?`<img src="${cafe.logo_url}" alt="">`:"☕"}</div>
+        <div>
+          <p class="m-title">${cafe.name||"كافيه"}</p>
+          <p class="m-sub">بطاقة الولاء الرقمية</p>
+        </div>
+      </div>
+      <div class="welcome">
+        <p>أهلًا بك</p>
+        <h1>${c.customer.full_name||"عميلنا العزيز"}</h1>
+        <button class="install-btn" id="installBtn">＋ إضافة للشاشة الرئيسية</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="loy-num">
+        <div><span class="lbl">رصيدك الحالي</span>
+          <strong><span id="curCups">${bal}</span> <span style="font-size:24px;color:var(--muted)">/ ${need}</span></strong></div>
+        <div class="total"><span class="lbl">الإجمالي</span><strong>${total}</strong></div>
+      </div>
+      <div class="progress"><span id="progressBar" style="width:${percent}%"></span></div>
+      <div class="cups-row">${cups}</div>
+      <p class="remain">${remain===0?"🎉 مؤهل لكوب مجاني!":`باقٍ ${remain} ${remain==1?"كوب":"أكواب"} على كوبك المجاني`}</p>
+    </section>
+
+    <section class="card roulette">
+      <h2>روليت المكافآت</h2>
+      <p class="muted" id="rouletteText">
+        ${canSpin?"لديك عملية شراء مؤهلة. اضغط الزر وشاهد مكافأتك.":"العب بعد زيارتك القادمة المؤهلة."}</p>
+      <div class="wheel-shell">
+        <div class="wheel-stage"></div>
+        <div class="wheel-pointer"></div>
+        <div class="wheel" id="wheel"><div class="wheel-labels" id="wheelLabels"></div></div>
+        <div class="wheel-center">☕</div>
+        <div class="wheel-lamps" id="wheelLamps"></div>
+      </div>
+      <button class="btn" id="spinBtn" ${canSpin?"":"disabled"}>
+        ${canSpin?"🎯 العب الآن":"غير متاح حاليًا"}</button>
+      <div class="result" id="spinResult"></div>
+    </section>
+
+    <section class="card">
+      <h2>مكافآتي</h2>
+      <p class="muted">المكافآت المتاحة لديك في هذا الكافيه.</p>
+      <div class="list">${rewards}</div>
+    </section>
+
+    <section class="card">
+      <h2>آخر الزيارات</h2>
+      <div class="list">${visits}</div>
+    </section>
+  `;
+  $("#loading").style.display="none";
+  $("#content").style.display="block";
+
+  wheelPrizes = (c.roulette_preview||[]).map(p=>p.label);
+  drawWheel(wheelPrizes.length?wheelPrizes:["خصم","ترقية","إضافة","كوب مجاني","نقاط","حظ أوفر"]);
+
+  if(canSpin) $("#spinBtn").onclick=doSpin;
+  $("#installBtn").onclick=openInstall;
+}
+
+function drawWheel(labels){
+  const seg = (labels&&labels.length)?labels:["1","2","3","4","5","6"];
+  const n = seg.length;
+  const colors=["#6F4E37","#C8A97E","#8a6a4d","#d9bd93","#5e4230","#b8946a"];
+  let g="";
+  for(let i=0;i<n;i++){
+    const a0=(360/n)*i, a1=(360/n)*(i+1);
+    g+=`${colors[i%colors.length]} ${a0}deg ${a1}deg,`;
+  }
+  const w=$("#wheel"); if(w) w.style.background=`conic-gradient(${g.slice(0,-1)})`;
+
+  const box=$("#wheelLabels"); if(box){ box.innerHTML="";
+    seg.forEach((label,i)=>{
+      const mid=(360/n)*i+(360/n)/2;
+      const el=document.createElement("div"); el.className="wheel-label";
+      el.style.transform=`rotate(${mid}deg) translateY(-96px) rotate(${-mid}deg)`;
+      el.textContent=String(label).length<=13?label:String(label).slice(0,12)+"…";
+      box.appendChild(el);
+    });
+  }
+  const lamps=$("#wheelLamps"); if(lamps&&!lamps.childElementCount){
+    for(let i=0;i<24;i++){ const l=document.createElement("span");
+      l.className="wheel-lamp"; l.style.transform=`rotate(${i*15}deg) translateY(-172px)`;
+      lamps.appendChild(l); }
+  }
+}
+
+let audioCtx=null;
+function ensureAudio(){ try{ audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+function tick(){ if(!audioCtx) return;
+  const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+  o.type="square"; o.frequency.value=880;
+  g.gain.setValueAtTime(.04,audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.05);
+  o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+.05);
+}
+function fanfare(win){ if(!audioCtx) return;
+  const notes=win?[523,659,784,1047]:[440,392];
+  notes.forEach((f,i)=>{ const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type="triangle"; o.frequency.value=f; const t=audioCtx.currentTime+i*.13;
+    g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.12,t+.03);
+    g.gain.exponentialRampToValueAtTime(.0001,t+.3);
+    o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t+.32); });
+}
+function vibrate(p){ if(navigator.vibrate) try{navigator.vibrate(p);}catch(e){} }
+
+async function doSpin(){
+  ensureAudio();
+  const btn=$("#spinBtn"); btn.disabled=true; btn.textContent="…جاري التدوير";
+  $("#spinResult").classList.remove("show");
+  try{
+    const res=await callFn("spin",{ magic_token:token, visit_id:state.pending_spin_visit_id });
+    wheelPrizes=(res.wheel||[]).map(w=>w.label);
+    drawWheel(wheelPrizes);
+
+    const n=wheelPrizes.length||6;
+    const idx=Math.max(0,wheelPrizes.indexOf(res.prize_label));
+    const segMid=(360/n)*idx+(360/n)/2;
+
+    const curMod=((currentRotation%360)+360)%360;
+    const delta=(360-((curMod+segMid)%360))%360;
+    currentRotation += 360*6 + delta;
+
+    const wheel=$("#wheel");
+    wheel.classList.add("is-spinning");
+    wheel.style.transform=`rotate(${currentRotation}deg)`;
+
+    vibrate([30]);
+    let d=90; const tickLoop=()=>{ tick(); d*=1.12; if(d<650) setTimeout(tickLoop,d); };
+    tickLoop();
+
+    setTimeout(()=>{
+      wheel.classList.remove("is-spinning");
+      const win = res.prize_type!=="none";
+      const box=$("#spinResult"); box.classList.add("show");
+      if(win){ box.style.color="var(--ok)"; box.style.background="rgba(127,183,126,.12)";
+        box.style.borderColor="rgba(127,183,126,.25)";
+        box.textContent=`🎉 مبروك! ربحت: ${res.prize_label}`; fanfare(true); vibrate([60,40,60,40,120]); }
+      else{ box.style.color="var(--muted)"; box.style.background="rgba(0,0,0,.18)";
+        box.style.borderColor="var(--line)";
+        box.textContent=`حظ أوفر: ${res.prize_label}`; fanfare(false); vibrate([80]); }
+      setTimeout(load,1400);
+    },4700);
+  }catch(e){
+    if(e.message==="ALREADY_SPUN") toast("سبق اللعب على هذه الزيارة",true);
+    else toast("تعذّر اللعب",true);
+    btn.disabled=false; btn.textContent="🎯 العب الآن";
+  }
+}
+
+let deferred;
+window.addEventListener("beforeinstallprompt",(e)=>{e.preventDefault();deferred=e;});
+async function openInstall(){
+  if(deferred){ deferred.prompt(); await deferred.userChoice; deferred=null; return; }
+  const ua=navigator.userAgent, steps=$("#installSteps");
+  if(/iphone|ipad|ipod/i.test(ua)) steps.innerHTML="<ol><li>اضغط زر المشاركة في المتصفح.</li><li>اختر: إضافة إلى الشاشة الرئيسية.</li><li>اضغط إضافة.</li></ol>";
+  else if(/android/i.test(ua)) steps.innerHTML="<ol><li>اضغط قائمة المتصفح ⋮.</li><li>اختر: إضافة إلى الشاشة الرئيسية.</li><li>اضغط تثبيت أو إضافة.</li></ol>";
+  else steps.innerHTML="<ol><li>افتح الصفحة من جوالك.</li><li>استخدم خيار «إضافة للشاشة الرئيسية» من المتصفح.</li></ol>";
+  $("#installModal").classList.add("show");
+}
+$("#closeInstall").onclick=()=>$("#installModal").classList.remove("show");
+$("#installModal").onclick=(e)=>{ if(e.target===$("#installModal")) $("#installModal").classList.remove("show"); };
+
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>
 </html>
