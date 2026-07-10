@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="dark">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -8,344 +8,421 @@
 <meta name="theme-color" content="#241812" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* ============================================================
-     نظام الألوان مبني بالكامل على هوية الكافيه:
-     applyTheme() يضبط --primary / --secondary / --bg / --btn
-     وكل ما تحته مشتق منها تلقائيًا عبر color-mix
-     ============================================================ */
+  /* ================================================================
+     الخط: foda.ttf — ضع الملف الأصلي بجانب هذه الصفحة وسيُستخدم تلقائيًا
+     ================================================================ */
+  @font-face{
+    font-family:"Foda";
+    src:local("Foda"), url("./foda.ttf") format("truetype");
+    font-display:swap;
+  }
+
+  /* ================================================================
+     نظام الألوان — مشتق بالكامل من هوية الكافيه الأربعة:
+     --primary / --secondary / --bg / --btn  (يضبطها applyTheme)
+     وكل ما عداها يُشتق تلقائيًا، بنسختين: داكن وفاتح
+     تُختار النسخة حسب إضاءة خلفية التاجر (تُحسب في JS)
+     ================================================================ */
   :root{
     --primary:#6F4E37; --secondary:#C8A97E; --bg:#241812; --btn:#C8A97E;
 
-    /* مشتقات تلقائية من هوية العميل */
-    --ink:      color-mix(in srgb, var(--secondary) 14%, #F7F2EA);
-    --muted:    color-mix(in srgb, var(--secondary) 34%, #9c8f83);
-    --card:     color-mix(in srgb, var(--bg) 86%, var(--secondary) 14%);
-    --card-hi:  color-mix(in srgb, var(--bg) 72%, var(--secondary) 28%);
-    --line:     color-mix(in srgb, var(--secondary) 22%, transparent);
-    --line-hi:  color-mix(in srgb, var(--secondary) 46%, transparent);
-    --glow:     color-mix(in srgb, var(--secondary) 55%, transparent);
-    --gold-1:   color-mix(in srgb, var(--secondary) 82%, #fff);
-    --gold-2:   color-mix(in srgb, var(--secondary) 88%, var(--primary));
-    --gold-3:   color-mix(in srgb, var(--secondary) 60%, var(--primary));
-    --deep:     color-mix(in srgb, var(--bg) 78%, #000);
-    --ok:#7FB77E;
-    --r-lg:30px; --r-md:20px; --r-sm:14px;
+    /* سلّم اللمسة الذهبية — من اللون الثانوي */
+    --acc-1: color-mix(in srgb, var(--secondary) 72%, #fff);
+    --acc-2: var(--secondary);
+    --acc-3: color-mix(in srgb, var(--secondary) 68%, #000);
+
+    /* ألوان النص فوق الألوان الأساسية — يضبطها JS حسب إضاءة كل لون */
+    --on-primary:#fff; --on-btn:#241812; --on-secondary:#241812;
+
+    --ok:#5da65c;
+    --r-lg:28px; --r-md:18px; --r-sm:12px;
+    --font:"Foda","Noto Kufi Arabic",system-ui,sans-serif;
+  }
+  :root[data-theme="dark"]{
+    --ink:      color-mix(in srgb, var(--secondary) 10%, #F8F4ED);
+    --muted:    color-mix(in srgb, var(--secondary) 40%, #97897c);
+    --card:     color-mix(in srgb, var(--bg) 88%, var(--secondary) 12%);
+    --card-hi:  color-mix(in srgb, var(--bg) 78%, var(--secondary) 22%);
+    --field:    color-mix(in srgb, var(--bg) 60%, #000);
+    --line:     color-mix(in srgb, var(--secondary) 20%, transparent);
+    --line-hi:  color-mix(in srgb, var(--secondary) 45%, transparent);
+    --shadow:   color-mix(in srgb, #000 55%, transparent);
+    --glow:     color-mix(in srgb, var(--secondary) 50%, transparent);
+    --scrim:    color-mix(in srgb, color-mix(in srgb,var(--bg) 70%,#000) 90%, transparent);
+    --amb-1:    color-mix(in srgb, var(--secondary) 20%, transparent);
+    --amb-2:    color-mix(in srgb, var(--primary) 30%, transparent);
+    --num-a:    var(--acc-1);
+    --num-b:    var(--acc-3);
+    --fill-a:   var(--acc-3);
+    --fill-b:   var(--acc-1);
+    --etch:.05;
+  }
+  :root[data-theme="light"]{
+    --ink:      color-mix(in srgb, var(--primary) 78%, #141110);
+    --muted:    color-mix(in srgb, var(--primary) 52%, #9b9187);
+    --card:     color-mix(in srgb, #fff 90%, var(--bg) 10%);
+    --card-hi:  #fff;
+    --field:    color-mix(in srgb, var(--bg) 55%, #fff);
+    --line:     color-mix(in srgb, var(--primary) 16%, transparent);
+    --line-hi:  color-mix(in srgb, var(--primary) 34%, transparent);
+    --shadow:   color-mix(in srgb, var(--primary) 26%, transparent);
+    --glow:     color-mix(in srgb, var(--secondary) 45%, transparent);
+    --scrim:    color-mix(in srgb, #fff 82%, var(--primary));
+    --amb-1:    color-mix(in srgb, var(--secondary) 26%, transparent);
+    --amb-2:    color-mix(in srgb, var(--primary) 14%, transparent);
+    --num-a:    var(--acc-2);
+    --num-b:    color-mix(in srgb, var(--secondary) 48%, #000);
+    --fill-a:   color-mix(in srgb, var(--secondary) 55%, #000);
+    --fill-b:   var(--acc-2);
+    --etch:.07;
   }
 
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html{scroll-behavior:smooth}
   body{
-    margin:0;color:var(--ink);
-    font-family:"IBM Plex Sans Arabic",system-ui,sans-serif;
-    font-weight:400;letter-spacing:.1px;
-    min-height:100dvh;
+    margin:0;color:var(--ink);font-family:var(--font);
+    font-weight:400;min-height:100dvh;overflow-x:hidden;
     padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
     background:var(--bg);
-    overflow-x:hidden;
   }
-  /* خلفية حيّة هادئة من لوني الهوية */
-  body::before{content:"";position:fixed;inset:-20%;z-index:-2;pointer-events:none;
+  body::before{content:"";position:fixed;inset:-25%;z-index:-2;pointer-events:none;
     background:
-      radial-gradient(48% 38% at 82% -4%, color-mix(in srgb,var(--secondary) 22%,transparent), transparent 70%),
-      radial-gradient(52% 44% at -8% 104%, color-mix(in srgb,var(--primary) 30%,transparent), transparent 70%),
-      var(--bg);
+      radial-gradient(46% 36% at 84% -6%, var(--amb-1), transparent 70%),
+      radial-gradient(54% 46% at -10% 106%, var(--amb-2), transparent 70%);
   }
-  /* نسيج «جيوشيه» محفور — بصمة الصفحة */
-  body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.05;
+  body::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:var(--etch);
+    background:repeating-conic-gradient(from 0deg at 50% -22%,
+      var(--secondary) 0deg .4deg, transparent .4deg 6deg);
+  }
+  :focus-visible{outline:2px solid var(--acc-2);outline-offset:3px;border-radius:6px}
+
+  .wrap{width:min(540px,calc(100% - 28px));margin:0 auto;padding:20px 0 60px}
+
+  /* ================================================================
+     شاشة الافتتاح — لحظة الهوية: شعار الكافيه واسمه
+     ================================================================ */
+  .boot{position:fixed;inset:0;z-index:100;display:grid;place-items:center;text-align:center;
+    background:var(--bg);transition:opacity .55s ease, visibility .55s}
+  .boot::before{content:"";position:absolute;inset:-25%;pointer-events:none;
     background:
-      repeating-conic-gradient(from 0deg at 50% -20%, var(--secondary) 0deg .4deg, transparent .4deg 6deg);
-  }
+      radial-gradient(46% 36% at 84% -6%, var(--amb-1), transparent 70%),
+      radial-gradient(54% 46% at -10% 106%, var(--amb-2), transparent 70%)}
+  .boot.hide{opacity:0;visibility:hidden;pointer-events:none}
+  .boot-inner{position:relative;z-index:1;display:grid;justify-items:center;
+    animation:bootIn .8s cubic-bezier(.2,1,.3,1)}
+  @keyframes bootIn{0%{transform:scale(.86);opacity:0}100%{transform:none;opacity:1}}
+  .boot-emblem{position:relative;width:128px;height:128px;display:grid;place-items:center}
+  .boot-ring{position:absolute;inset:0;border-radius:50%;
+    border:1.5px dashed color-mix(in srgb, var(--secondary) 55%, transparent);
+    animation:slowSpin 14s linear infinite}
+  .boot-ring.r2{inset:-12px;border:1px solid color-mix(in srgb, var(--secondary) 25%, transparent);
+    animation:slowSpin 26s linear infinite reverse}
+  @keyframes slowSpin{to{transform:rotate(360deg)}}
+  .boot-logo{width:92px;height:92px;border-radius:50%;overflow:hidden;display:grid;place-items:center;
+    font-size:40px;color:var(--on-primary);
+    background:linear-gradient(150deg, color-mix(in srgb,var(--primary) 88%,#000),
+      color-mix(in srgb,var(--primary) 62%,var(--secondary)));
+    border:2px solid color-mix(in srgb,var(--secondary) 60%, transparent);
+    box-shadow:0 18px 44px -14px var(--glow), inset 0 1px 0 color-mix(in srgb,#fff 30%,transparent)}
+  .boot-logo img{width:100%;height:100%;object-fit:cover}
+  .boot-name{margin:22px 0 0;font-size:24px;font-weight:600}
+  .boot-kicker{margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+  .boot-status{margin:30px 0 0;font-size:13px;color:var(--muted)}
+  .boot-bar{width:150px;height:2.5px;border-radius:999px;overflow:hidden;margin-top:14px;
+    background:color-mix(in srgb, var(--secondary) 18%, transparent)}
+  .boot-bar span{display:block;height:100%;width:40%;border-radius:999px;
+    background:linear-gradient(90deg, transparent, var(--acc-1), transparent);
+    animation:scan 1.2s ease-in-out infinite}
+  @keyframes scan{0%{transform:translateX(220%)}100%{transform:translateX(-320%)}}
 
-  h1,h2,.display{font-family:"Reem Kufi","IBM Plex Sans Arabic",sans-serif;font-weight:600;letter-spacing:.4px}
-
-  .wrap{width:min(540px,calc(100% - 28px));margin:0 auto;padding:20px 0 56px}
-
-  /* ---------- شاشة التحميل ---------- */
-  .loader{display:grid;place-items:center;gap:18px;padding:34vh 0;color:var(--muted);text-align:center}
-  .loader .brew{width:54px;height:54px;border-radius:50%;
-    border:2.5px solid var(--line);border-top-color:var(--secondary);
-    animation:spin 1s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-
-  /* ============ 1) بطاقة العضوية المحفورة (الهيرو) ============ */
-  .hero{perspective:1200px;margin-bottom:26px}
-  .member-card{
-    position:relative;border-radius:var(--r-lg);padding:26px 24px 24px;
-    min-height:220px;overflow:hidden;transform-style:preserve-3d;
+  /* ================================================================
+     بطاقة العضوية
+     ================================================================ */
+  .hero{perspective:1200px;margin-bottom:24px}
+  .member-card{position:relative;border-radius:var(--r-lg);padding:24px 22px 22px;overflow:hidden;
+    color:var(--on-primary);transform-style:preserve-3d;transition:transform .3s ease;
     background:
-      radial-gradient(120% 90% at 85% -10%, color-mix(in srgb,var(--gold-1) 26%,transparent), transparent 55%),
-      linear-gradient(150deg,
-        color-mix(in srgb,var(--primary) 88%, #000) 0%,
-        color-mix(in srgb,var(--primary) 68%, var(--secondary)) 48%,
-        color-mix(in srgb,var(--primary) 90%, #000) 100%);
-    border:1px solid var(--line-hi);
-    box-shadow:
-      0 30px 70px -28px color-mix(in srgb,var(--deep) 90%, transparent),
-      0 8px 24px -12px color-mix(in srgb,var(--glow) 60%, transparent),
-      inset 0 1px 0 color-mix(in srgb,#fff 30%, transparent);
-    transition:transform .25s ease;
-  }
-  /* نقشة حفر دائرية داخل البطاقة */
-  .member-card::before{content:"";position:absolute;inset:0;opacity:.14;pointer-events:none;
-    background:
-      repeating-radial-gradient(circle at 110% -30%, transparent 0 9px, color-mix(in srgb,var(--gold-1) 60%,transparent) 9px 9.8px);
-  }
-  /* لمعة تمر على البطاقة */
+      radial-gradient(130% 100% at 88% -12%, color-mix(in srgb,var(--secondary) 34%,transparent), transparent 52%),
+      linear-gradient(155deg,
+        color-mix(in srgb,var(--primary) 90%, #000) 0%,
+        color-mix(in srgb,var(--primary) 66%, var(--secondary)) 52%,
+        color-mix(in srgb,var(--primary) 92%, #000) 100%);
+    border:1px solid color-mix(in srgb, var(--secondary) 40%, transparent);
+    box-shadow:0 26px 60px -24px var(--shadow), 0 10px 30px -18px var(--glow),
+      inset 0 1px 0 color-mix(in srgb,#fff 28%,transparent)}
+  .member-card::before{content:"";position:absolute;inset:0;opacity:.13;pointer-events:none;
+    background:repeating-radial-gradient(circle at 112% -32%,
+      transparent 0 9px, color-mix(in srgb,#fff 55%,transparent) 9px 9.7px)}
   .member-card::after{content:"";position:absolute;inset:-40%;pointer-events:none;
-    background:linear-gradient(115deg, transparent 42%, color-mix(in srgb,#fff 32%,transparent) 50%, transparent 58%);
-    transform:translateX(-160%) rotate(0.001deg);
-    animation:sheen 5.5s ease-in-out 1.2s infinite;
-  }
-  @keyframes sheen{0%{transform:translateX(-160%)}42%,100%{transform:translateX(160%)}}
+    background:linear-gradient(115deg, transparent 43%, color-mix(in srgb,#fff 30%,transparent) 50%, transparent 57%);
+    transform:translateX(-170%);animation:sheen 6s ease-in-out 1.4s infinite}
+  @keyframes sheen{0%{transform:translateX(-170%)}40%,100%{transform:translateX(170%)}}
 
   .mc-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .mc-brand{display:flex;align-items:center;gap:12px}
-  .mc-logo{width:52px;height:52px;border-radius:16px;overflow:hidden;flex:0 0 auto;
-    display:grid;place-items:center;font-size:24px;
-    background:color-mix(in srgb,#fff 14%,transparent);
-    border:1px solid color-mix(in srgb,#fff 26%,transparent);
-    box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 30%,transparent)}
+  .mc-brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .mc-logo{width:50px;height:50px;border-radius:16px;overflow:hidden;flex:0 0 auto;
+    display:grid;place-items:center;font-size:23px;
+    background:color-mix(in srgb,#fff 15%,transparent);
+    border:1px solid color-mix(in srgb,#fff 28%,transparent)}
   .mc-logo img{width:100%;height:100%;object-fit:cover}
-  .mc-name{margin:0;font-size:18px;color:#fff}
-  .mc-tag{margin:2px 0 0;font-size:11.5px;letter-spacing:2.5px;font-weight:500;
-    color:color-mix(in srgb,var(--gold-1) 80%, #fff);text-transform:uppercase}
-  /* ختم عضوية دائري يدور ببطء */
-  .mc-seal{position:relative;width:58px;height:58px;flex:0 0 auto}
-  .mc-seal svg{width:100%;height:100%;animation:sealSpin 26s linear infinite}
+  .mc-name{margin:0;font-size:17.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mc-tag{margin:3px 0 0;font-size:10.5px;letter-spacing:3px;opacity:.75}
+  .mc-seal{position:relative;width:56px;height:56px;flex:0 0 auto}
+  .mc-seal svg{width:100%;height:100%;animation:slowSpin 28s linear infinite}
   .mc-seal .seal-core{position:absolute;inset:14px;border-radius:50%;display:grid;place-items:center;
-    font-size:17px;background:color-mix(in srgb,#fff 12%,transparent);
-    border:1px solid color-mix(in srgb,#fff 30%,transparent)}
-  @keyframes sealSpin{to{transform:rotate(360deg)}}
+    font-size:15px;background:color-mix(in srgb,#fff 12%,transparent);
+    border:1px solid color-mix(in srgb,#fff 28%,transparent)}
+  .mc-body{position:relative;z-index:1;margin-top:24px}
+  .mc-hello{margin:0;font-size:12.5px;opacity:.78;letter-spacing:.6px}
+  .mc-member{margin:5px 0 0;font-size:28px;line-height:1.35;font-weight:600;
+    text-shadow:0 2px 16px color-mix(in srgb,#000 35%,transparent)}
+  .mc-foot{position:relative;z-index:1;margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .mc-chip{width:38px;height:28px;border-radius:7px;position:relative;
+    background:linear-gradient(135deg,var(--acc-1),var(--acc-3));
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,#000 25%,transparent)}
+  .mc-chip::before{content:"";position:absolute;inset:6px 5px;border-radius:4px;
+    border:1px solid color-mix(in srgb,#000 30%,transparent)}
+  .install-btn{appearance:none;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:500;
+    color:var(--on-primary);padding:10px 15px;border-radius:999px;transition:.2s;
+    background:color-mix(in srgb,#fff 13%,transparent);
+    border:1px solid color-mix(in srgb,#fff 30%,transparent);backdrop-filter:blur(6px)}
+  .install-btn:active{transform:scale(.95)}
 
-  .mc-body{position:relative;z-index:1;margin-top:26px}
-  .mc-hello{margin:0;font-size:13px;color:color-mix(in srgb,#fff 72%,var(--secondary))}
-  .mc-member{margin:4px 0 0;font-size:30px;line-height:1.25;color:#fff;
-    text-shadow:0 2px 14px color-mix(in srgb,var(--deep) 60%,transparent)}
-  .mc-foot{position:relative;z-index:1;margin-top:20px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-  .mc-chip{width:40px;height:30px;border-radius:8px;
-    background:linear-gradient(135deg,var(--gold-1),var(--gold-3));
-    box-shadow:inset 0 0 0 1px color-mix(in srgb,#000 25%,transparent);position:relative}
-  .mc-chip::before{content:"";position:absolute;inset:7px 6px;border:1px solid color-mix(in srgb,#000 30%,transparent);border-radius:4px}
-  .install-btn{appearance:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:13px;
-    color:#fff;padding:10px 16px;border-radius:999px;
-    background:color-mix(in srgb,#fff 12%,transparent);
-    border:1px solid color-mix(in srgb,#fff 30%,transparent);
-    backdrop-filter:blur(6px);transition:.2s}
-  .install-btn:active{transform:scale(.96)}
-
-  /* ============ الأقسام العامة ============ */
-  .card{position:relative;background:linear-gradient(180deg,var(--card-hi),var(--card));
-    border:1px solid var(--line);border-radius:var(--r-lg);padding:24px;margin-bottom:20px;
-    box-shadow:0 24px 50px -30px var(--deep), inset 0 1px 0 color-mix(in srgb,#fff 7%,transparent)}
-  .eyebrow{display:flex;align-items:center;gap:10px;margin:0 0 14px;
-    font-size:11.5px;letter-spacing:3px;font-weight:600;color:var(--muted)}
+  /* ================================================================
+     الأقسام
+     ================================================================ */
+  .card{position:relative;border-radius:var(--r-lg);padding:22px;margin-bottom:18px;
+    background:linear-gradient(180deg,var(--card-hi),var(--card));
+    border:1px solid var(--line);
+    box-shadow:0 22px 46px -30px var(--shadow), inset 0 1px 0 color-mix(in srgb,#fff 8%,transparent)}
+  .eyebrow{display:flex;align-items:center;gap:12px;margin:0 0 14px;
+    font-size:12px;font-weight:600;color:var(--muted)}
   .eyebrow::after{content:"";height:1px;flex:1;
     background:linear-gradient(to left,var(--line-hi),transparent)}
-  .card h2{font-size:19px;margin:0 0 4px;color:var(--ink)}
-  .muted{color:var(--muted);line-height:1.9;margin:0;font-size:13.5px}
+  .muted{color:var(--muted);line-height:2;margin:0;font-size:13px}
 
-  /* دخول متدرّج للأقسام */
-  .reveal{opacity:0;transform:translateY(16px);animation:rise .7s cubic-bezier(.2,.8,.2,1) forwards}
-  .reveal:nth-child(2){animation-delay:.08s}
-  .reveal:nth-child(3){animation-delay:.16s}
-  .reveal:nth-child(4){animation-delay:.24s}
-  .reveal:nth-child(5){animation-delay:.32s}
+  .reveal{opacity:0;transform:translateY(18px)}
+  .in .reveal{animation:rise .7s cubic-bezier(.2,.9,.25,1) forwards}
+  .in .reveal:nth-child(2){animation-delay:.09s}
+  .in .reveal:nth-child(3){animation-delay:.18s}
+  .in .reveal:nth-child(4){animation-delay:.27s}
+  .in .reveal:nth-child(5){animation-delay:.36s}
   @keyframes rise{to{opacity:1;transform:none}}
 
-  /* ============ 2) الرصيد + الأختام ============ */
-  .bal-row{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:18px}
-  .bal-num{font-family:"Reem Kufi",sans-serif;font-size:60px;line-height:.85;font-weight:700;
-    background:linear-gradient(160deg,var(--gold-1),var(--gold-3));
+  /* ---------- الرصيد والأختام ---------- */
+  .bal-row{display:flex;align-items:baseline;gap:10px;margin-bottom:16px}
+  .bal-num{font-size:58px;line-height:.95;font-weight:700;
+    background:linear-gradient(165deg,var(--num-a),var(--num-b));
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 4px 14px var(--glow))}
-  .bal-of{font-size:22px;color:var(--muted);font-weight:500}
-  .bal-side{text-align:left}
-  .bal-side .lbl{font-size:12px;color:var(--muted)}
-  .bal-side strong{display:block;font-family:"Reem Kufi",sans-serif;font-size:26px;margin-top:2px}
-
-  .track{height:8px;border-radius:999px;overflow:hidden;position:relative;
-    background:color-mix(in srgb,var(--deep) 70%,transparent);
-    box-shadow:inset 0 1px 3px color-mix(in srgb,#000 40%,transparent)}
+    filter:drop-shadow(0 4px 16px var(--glow))}
+  .bal-of{font-size:19px;color:var(--muted)}
+  .track{height:8px;border-radius:999px;overflow:hidden;position:relative;background:var(--field);
+    box-shadow:inset 0 1px 3px color-mix(in srgb,#000 25%,transparent)}
   .track span{display:block;height:100%;border-radius:999px;position:relative;
-    background:linear-gradient(90deg,var(--gold-3),var(--gold-1));
-    transition:width 1s cubic-bezier(.2,.8,.2,1)}
+    background:linear-gradient(90deg,var(--fill-a),var(--fill-b));
+    transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
   .track span::after{content:"";position:absolute;inset:0;border-radius:999px;
     background:linear-gradient(90deg,transparent,color-mix(in srgb,#fff 45%,transparent),transparent);
-    background-size:200% 100%;animation:shimmer 2.4s linear infinite}
+    background-size:200% 100%;animation:shimmer 2.6s linear infinite}
   @keyframes shimmer{to{background-position:-200% 0}}
-
-  /* أختام الشمع */
-  .stamps{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
-  .stamp{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:17px;
-    color:color-mix(in srgb,var(--secondary) 50%,transparent);
-    border:1.5px dashed var(--line-hi);
-    background:color-mix(in srgb,var(--deep) 40%,transparent);
-    transition:.3s}
-  .stamp.on{color:var(--deep);border:none;
-    background:radial-gradient(circle at 34% 28%, var(--gold-1), var(--gold-2) 58%, var(--gold-3));
-    box-shadow:0 6px 14px -6px var(--glow), inset 0 2px 3px color-mix(in srgb,#fff 50%,transparent),
-      inset 0 -3px 5px color-mix(in srgb,#000 28%,transparent);
-    animation:stampIn .45s cubic-bezier(.2,1.4,.4,1) backwards}
+  .stamps{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:18px}
+  .stamp{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:16px;
+    color:color-mix(in srgb,var(--muted) 70%,transparent);
+    border:1.5px dashed var(--line-hi);background:var(--field);transition:.3s}
+  .stamp.on{color:var(--on-secondary);border:none;
+    background:radial-gradient(circle at 34% 28%, var(--acc-1), var(--acc-2) 60%, var(--acc-3));
+    box-shadow:0 7px 15px -6px var(--glow),
+      inset 0 2px 3px color-mix(in srgb,#fff 50%,transparent),
+      inset 0 -3px 5px color-mix(in srgb,#000 25%,transparent);
+    animation:stampIn .5s cubic-bezier(.2,1.5,.4,1) backwards}
   .stamp.on:nth-child(odd){rotate:-4deg}
   .stamp.on:nth-child(3n){rotate:5deg}
-  @keyframes stampIn{0%{transform:scale(1.9);opacity:0}100%{transform:scale(1);opacity:1}}
-  .remain{font-size:13.5px;margin:16px 0 0;font-weight:600;
-    color:color-mix(in srgb,var(--gold-1) 85%,#fff)}
+  @keyframes stampIn{0%{transform:scale(2);opacity:0}100%{transform:scale(1);opacity:1}}
+  .remain{font-size:13px;margin:16px 0 0;font-weight:500;
+    color:color-mix(in srgb, var(--acc-2) 60%, var(--ink))}
 
-  /* ============ 3) الروليت الأسطوري ============ */
+  /* ================================================================
+     الروليت — عجلة حقيقية: اسحب وأفلت، أو اضغط الزر
+     ================================================================ */
   .roulette{text-align:center;overflow:hidden;
     background:
-      radial-gradient(90% 60% at 50% 0%, color-mix(in srgb,var(--secondary) 12%,transparent), transparent 60%),
+      radial-gradient(95% 55% at 50% -4%, color-mix(in srgb,var(--secondary) 13%,transparent), transparent 62%),
       linear-gradient(180deg,var(--card-hi),var(--card))}
-  .wheel-shell{width:min(340px,86vw);height:min(340px,86vw);margin:22px auto 8px;position:relative;
-    filter:drop-shadow(0 30px 44px color-mix(in srgb,var(--deep) 85%,transparent))}
-  /* إطار برونزي بمسامير */
-  .bezel{position:absolute;inset:-14px;border-radius:50%;z-index:1;
-    background:
-      radial-gradient(circle at 32% 24%, color-mix(in srgb,#fff 55%,transparent), transparent 18%),
-      conic-gradient(var(--gold-2),var(--gold-1),var(--gold-3),var(--gold-1),var(--gold-2));
-    box-shadow:inset 0 0 0 2px color-mix(in srgb,#fff 30%,transparent),
-      inset 0 0 26px color-mix(in srgb,#000 35%,transparent),
-      0 20px 46px color-mix(in srgb,var(--deep) 80%,transparent)}
-  .bezel::before{content:"";position:absolute;inset:9px;border-radius:50%;
-    background:repeating-conic-gradient(from 0deg,
-      color-mix(in srgb,#fff 40%,transparent) 0deg 1deg, transparent 1deg 15deg)}
-  .wheel-lamps{position:absolute;inset:-14px;border-radius:50%;z-index:6;pointer-events:none}
-  .wheel-lamp{position:absolute;top:50%;left:50%;width:8px;height:8px;margin:-4px;border-radius:50%;
-    background:radial-gradient(circle at 35% 30%, #fff, var(--gold-1) 60%, var(--gold-3));
-    box-shadow:0 0 8px var(--glow);transition:opacity .15s}
-  .wheel.is-spinning ~ .wheel-lamps .wheel-lamp:nth-child(odd){animation:lamp .38s linear infinite}
-  .wheel.is-spinning ~ .wheel-lamps .wheel-lamp:nth-child(even){animation:lamp .38s linear infinite reverse}
-  @keyframes lamp{0%,100%{opacity:1}50%{opacity:.25}}
+  .wheel-shell{width:min(330px,84vw);height:min(330px,84vw);margin:24px auto 10px;position:relative;
+    touch-action:none;user-select:none;-webkit-user-select:none;
+    filter:drop-shadow(0 28px 40px var(--shadow))}
+  .wheel-shell.armed{cursor:grab}
+  .wheel-shell.dragging{cursor:grabbing}
+  .wheel-shell.armed::after{content:"";position:absolute;inset:-22px;border-radius:50%;z-index:0;
+    box-shadow:0 0 60px var(--glow);opacity:.55;animation:breath 2.6s ease-in-out infinite;pointer-events:none}
+  @keyframes breath{50%{opacity:1}}
 
-  .wheel-pointer{position:absolute;top:-24px;left:50%;transform-origin:50% 20%;
-    transform:translateX(-50%);width:46px;height:60px;z-index:8;
-    filter:drop-shadow(0 8px 12px color-mix(in srgb,#000 45%,transparent));transition:transform .07s}
-  .wheel-pointer.kick{transform:translateX(-50%) rotate(-14deg)}
+  .bezel{position:absolute;inset:-13px;border-radius:50%;z-index:1;
+    background:
+      radial-gradient(circle at 32% 22%, color-mix(in srgb,#fff 55%,transparent), transparent 20%),
+      conic-gradient(var(--acc-3),var(--acc-1),var(--acc-2),var(--acc-3),var(--acc-1),var(--acc-3));
+    box-shadow:inset 0 0 0 2px color-mix(in srgb,#fff 28%,transparent),
+      inset 0 0 24px color-mix(in srgb,#000 32%,transparent),
+      0 18px 42px var(--shadow)}
+  .bezel::before{content:"";position:absolute;inset:8px;border-radius:50%;
+    background:repeating-conic-gradient(from 0deg,
+      color-mix(in srgb,#fff 42%,transparent) 0deg 1deg, transparent 1deg 15deg)}
+
+  .wheel-lamps{position:absolute;inset:-13px;border-radius:50%;z-index:6;pointer-events:none}
+  .wheel-lamp{position:absolute;top:50%;left:50%;width:7.5px;height:7.5px;margin:-3.75px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #fff, var(--acc-1) 55%, var(--acc-3));
+    box-shadow:0 0 8px var(--glow)}
+  .armed .wheel-lamp{animation:chase 1.5s linear infinite}
+  .spinning .wheel-lamp:nth-child(odd){animation:lamp .34s linear infinite}
+  .spinning .wheel-lamp:nth-child(even){animation:lamp .34s linear infinite reverse}
+  @keyframes lamp{0%,100%{opacity:1}50%{opacity:.22}}
+  @keyframes chase{0%,88%,100%{opacity:1}92%{opacity:.15}}
+
+  .wheel-pointer{position:absolute;top:-23px;left:50%;z-index:8;width:44px;height:58px;
+    transform:translateX(-50%);transform-origin:50% 18%;
+    transition:transform .12s cubic-bezier(.2,2.2,.4,1);
+    filter:drop-shadow(0 8px 12px color-mix(in srgb,#000 40%,transparent))}
+  .wheel-pointer.kick{transform:translateX(-50%) rotate(-17deg);transition:transform .05s ease-out}
   .wheel-pointer::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
-    width:34px;height:34px;border-radius:50%;
-    background:radial-gradient(circle at 34% 28%, #fff, var(--gold-1) 55%, var(--gold-3));
-    border:2px solid color-mix(in srgb,#fff 80%,transparent)}
-  .wheel-pointer::after{content:"";position:absolute;top:26px;left:50%;transform:translateX(-50%);
-    width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;
-    border-top:30px solid var(--gold-1)}
+    width:32px;height:32px;border-radius:50%;
+    background:radial-gradient(circle at 34% 28%, #fff, var(--acc-1) 55%, var(--acc-3));
+    border:2px solid color-mix(in srgb,#fff 78%,transparent)}
+  .wheel-pointer::after{content:"";position:absolute;top:25px;left:50%;transform:translateX(-50%);
+    width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;
+    border-top:29px solid var(--acc-1)}
 
   .wheel{position:relative;z-index:2;width:100%;height:100%;border-radius:50%;overflow:hidden;
-    border:10px solid color-mix(in srgb,var(--deep) 55%, var(--primary));
+    border:9px solid color-mix(in srgb, var(--primary) 55%, #000);
     background:conic-gradient(var(--primary),var(--secondary),var(--primary));
-    transition:transform 4.6s cubic-bezier(.08,.84,.13,1);
-    box-shadow:inset 0 0 0 2px color-mix(in srgb,#fff 25%,transparent),
-      inset 0 0 44px color-mix(in srgb,#000 30%,transparent)}
-  .wheel::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:2;
-    background:radial-gradient(circle at 33% 25%, color-mix(in srgb,#fff 28%,transparent), transparent 24%),
-      radial-gradient(circle at 70% 78%, color-mix(in srgb,#000 22%,transparent), transparent 26%)}
+    box-shadow:inset 0 0 0 2px color-mix(in srgb,#fff 22%,transparent),
+      inset 0 0 42px color-mix(in srgb,#000 28%,transparent);
+    will-change:transform}
+  .wheel::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:4;
+    background:radial-gradient(circle at 33% 24%, color-mix(in srgb,#fff 26%,transparent), transparent 26%),
+      radial-gradient(circle at 70% 80%, color-mix(in srgb,#000 20%,transparent), transparent 28%)}
+  .wheel-sep{position:absolute;inset:0;border-radius:50%;z-index:2;pointer-events:none}
   .wheel-labels{position:absolute;inset:0;border-radius:50%;pointer-events:none;z-index:3}
-  .wheel-label{position:absolute;top:50%;left:50%;width:92px;min-height:32px;
-    margin-left:-46px;margin-top:-16px;display:grid;place-items:center;text-align:center;
-    color:#fff;font-weight:700;font-size:12.5px;line-height:1.3;
-    font-family:"IBM Plex Sans Arabic",sans-serif;
-    text-shadow:0 2px 8px color-mix(in srgb,#000 60%,transparent);padding:3px 4px}
-  .wheel-center{position:absolute;z-index:5;width:86px;height:86px;border-radius:50%;top:50%;left:50%;
-    transform:translate(-50%,-50%);display:grid;place-items:center;font-size:30px;overflow:hidden;
-    background:radial-gradient(circle at 34% 26%, #fff, color-mix(in srgb,var(--gold-1) 75%,#fff) 46%, var(--gold-2));
+  .wheel-label{position:absolute;top:50%;left:50%;width:88px;height:30px;
+    margin-left:-44px;margin-top:-15px;display:grid;place-items:center;text-align:center;
+    font-weight:600;font-size:12px;line-height:1.3;
+    text-shadow:0 1px 6px color-mix(in srgb,#000 35%,transparent)}
+  .wheel-center{position:absolute;z-index:5;width:82px;height:82px;border-radius:50%;top:50%;left:50%;
+    transform:translate(-50%,-50%);display:grid;place-items:center;font-size:28px;overflow:hidden;
+    color:var(--on-secondary);
+    background:radial-gradient(circle at 34% 26%, #fff, color-mix(in srgb,var(--acc-1) 78%,#fff) 45%, var(--acc-2));
     border:5px solid color-mix(in srgb,#fff 85%,transparent);
-    box-shadow:0 12px 22px color-mix(in srgb,#000 35%,transparent),
-      inset 0 -4px 8px color-mix(in srgb,#000 20%,transparent)}
+    box-shadow:0 12px 22px color-mix(in srgb,#000 30%,transparent),
+      inset 0 -4px 8px color-mix(in srgb,#000 18%,transparent)}
   .wheel-center img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .drag-hint{font-size:12px;color:var(--muted);margin:12px 0 0}
 
-  .btn{appearance:none;border:0;border-radius:18px;padding:17px 22px;width:100%;
-    font-family:"Reem Kufi","IBM Plex Sans Arabic",sans-serif;font-weight:700;font-size:17px;
-    cursor:pointer;color:var(--deep);position:relative;overflow:hidden;
-    background:linear-gradient(160deg,var(--gold-1),var(--btn) 55%,var(--gold-3));
-    box-shadow:0 14px 28px -12px var(--glow), inset 0 1px 0 color-mix(in srgb,#fff 55%,transparent);
-    transition:.18s;margin-top:14px}
+  .btn{appearance:none;border:0;border-radius:17px;padding:17px 22px;width:100%;
+    font-family:inherit;font-weight:700;font-size:16.5px;cursor:pointer;
+    color:var(--on-btn);position:relative;overflow:hidden;margin-top:14px;
+    background:linear-gradient(165deg, color-mix(in srgb,var(--btn) 78%, #fff), var(--btn) 45%, color-mix(in srgb,var(--btn) 74%, #000));
+    box-shadow:0 14px 30px -12px color-mix(in srgb, var(--btn) 55%, transparent),
+      inset 0 1px 0 color-mix(in srgb,#fff 50%,transparent);
+    transition:.18s}
   .btn::after{content:"";position:absolute;inset:0;
-    background:linear-gradient(115deg,transparent 42%,color-mix(in srgb,#fff 40%,transparent) 50%,transparent 58%);
-    background-size:250% 100%;animation:shimmer 3.2s linear infinite}
+    background:linear-gradient(115deg,transparent 43%,color-mix(in srgb,#fff 38%,transparent) 50%,transparent 57%);
+    background-size:250% 100%;animation:shimmer 3.4s linear infinite}
   .btn:active{transform:scale(.97)}
   .btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
   .btn:disabled::after{display:none}
 
-  .result{display:none;margin-top:16px;border-radius:var(--r-md);padding:16px;
-    font-weight:700;line-height:1.9;border:1px solid var(--line)}
+  .result{display:none;margin-top:16px;border-radius:var(--r-md);padding:15px;
+    font-weight:600;line-height:1.9;font-size:14px;border:1px solid var(--line)}
   .result.show{display:block;animation:pop .4s ease}
   @keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
 
-  /* ستارة الجائزة السينمائية */
-  .prize-overlay{position:fixed;inset:0;z-index:80;display:none;place-items:center;text-align:center;
-    background:color-mix(in srgb,var(--deep) 88%,transparent);backdrop-filter:blur(10px);padding:24px}
+  /* ---------- ستارة الجائزة ---------- */
+  .prize-overlay{position:fixed;inset:0;z-index:110;display:none;place-items:center;text-align:center;
+    background:var(--scrim);backdrop-filter:blur(12px);padding:24px}
   .prize-overlay.show{display:grid;animation:fadeIn .35s ease}
   @keyframes fadeIn{from{opacity:0}}
-  .prize-rays{position:absolute;inset:-40%;pointer-events:none;opacity:.5;
+  .prize-rays{position:absolute;inset:-40%;pointer-events:none;opacity:.32;
     background:repeating-conic-gradient(from 0deg at 50% 50%,
-      color-mix(in srgb,var(--secondary) 30%,transparent) 0deg 6deg, transparent 6deg 18deg);
-    animation:sealSpin 30s linear infinite;
-    -webkit-mask:radial-gradient(circle at 50% 50%, #000, transparent 62%);
-    mask:radial-gradient(circle at 50% 50%, #000, transparent 62%)}
-  .prize-inner{position:relative;z-index:1;animation:prizeUp .6s cubic-bezier(.2,1.3,.4,1)}
-  @keyframes prizeUp{0%{transform:translateY(30px) scale(.85);opacity:0}100%{transform:none;opacity:1}}
-  .prize-kicker{font-size:13px;letter-spacing:4px;color:var(--muted);margin:0 0 12px;font-weight:600}
-  .prize-name{font-family:"Reem Kufi",sans-serif;font-size:clamp(30px,9vw,46px);font-weight:700;margin:0;
-    background:linear-gradient(160deg,#fff,var(--gold-1) 45%,var(--gold-3));
+      color-mix(in srgb,var(--secondary) 32%,transparent) 0deg 6deg, transparent 6deg 18deg);
+    animation:slowSpin 32s linear infinite;
+    -webkit-mask:radial-gradient(circle at 50% 50%, #000, transparent 60%);
+    mask:radial-gradient(circle at 50% 50%, #000, transparent 60%)}
+  .prize-inner{position:relative;z-index:1;animation:prizeUp .65s cubic-bezier(.2,1.35,.4,1);max-width:420px}
+  @keyframes prizeUp{0%{transform:translateY(34px) scale(.85);opacity:0}100%{transform:none;opacity:1}}
+  .prize-emoji{font-size:54px;display:block;margin-bottom:8px;animation:float 2.6s ease-in-out infinite}
+  @keyframes float{50%{transform:translateY(-9px)}}
+  .prize-kicker{font-size:13.5px;color:var(--muted);margin:0 0 12px;font-weight:600}
+  .prize-name{font-size:clamp(28px,8.5vw,42px);font-weight:700;margin:0;line-height:1.5;
+    background:linear-gradient(165deg, color-mix(in srgb,var(--acc-1) 55%, var(--ink)), var(--acc-2) 55%, var(--acc-3));
     -webkit-background-clip:text;background-clip:text;color:transparent;
     filter:drop-shadow(0 6px 22px var(--glow))}
-  .prize-emoji{font-size:56px;margin-bottom:10px;display:block;animation:float 2.4s ease-in-out infinite}
-  @keyframes float{50%{transform:translateY(-8px)}}
-  .prize-close{margin-top:26px;width:auto;padding:14px 44px}
-  .confetti{position:fixed;top:-12px;z-index:81;width:9px;height:14px;border-radius:2px;pointer-events:none;
+  .prize-close{margin-top:28px;width:auto;padding:14px 42px}
+  .confetti{position:fixed;top:-14px;z-index:111;width:9px;height:14px;border-radius:2px;pointer-events:none;
     animation:confFall linear forwards}
-  @keyframes confFall{to{transform:translateY(110vh) rotate(720deg);opacity:.9}}
+  @keyframes confFall{to{transform:translateY(112vh) rotate(760deg);opacity:.85}}
 
-  /* ============ 4) القوائم ============ */
-  .list{display:grid;gap:10px;margin-top:16px}
+  /* ---------- القوائم ---------- */
+  .list{display:grid;gap:10px;margin-top:14px}
   .row{display:flex;justify-content:space-between;align-items:center;gap:12px;
-    padding:15px 16px;border-radius:var(--r-md);
-    background:color-mix(in srgb,var(--deep) 45%,transparent);
-    border:1px solid var(--line);transition:.2s}
-  .row:active{border-color:var(--line-hi)}
-  .row .t{font-weight:600;font-size:15px}
-  .row .m{font-size:12.5px;color:var(--muted);margin-top:4px}
-  .pill{font-size:11.5px;font-weight:600;padding:6px 13px;border-radius:999px;white-space:nowrap;
-    color:var(--gold-1);border:1px solid var(--line-hi);
+    padding:14px 15px;border-radius:var(--r-md);background:var(--field);
+    border:1px solid var(--line)}
+  .row .t{font-weight:600;font-size:14.5px}
+  .row .m{font-size:12px;color:var(--muted);margin-top:4px}
+  .pill{font-size:11px;font-weight:600;padding:6px 12px;border-radius:999px;white-space:nowrap;
+    color:color-mix(in srgb, var(--acc-2) 55%, var(--ink));
+    border:1px solid var(--line-hi);
     background:color-mix(in srgb,var(--secondary) 12%,transparent)}
   .pill.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,transparent);
-    background:color-mix(in srgb,var(--ok) 12%,transparent)}
-  .empty{padding:22px 16px;border-radius:var(--r-md);text-align:center;line-height:1.9;
-    color:var(--muted);border:1.5px dashed var(--line);font-size:13.5px}
+    background:color-mix(in srgb,var(--ok) 10%,transparent)}
+  .empty{padding:20px 16px;border-radius:var(--r-md);text-align:center;line-height:2;
+    color:var(--muted);border:1.5px dashed var(--line);font-size:13px}
 
-  /* ============ المودال والتوست ============ */
-  .modal{display:none;position:fixed;inset:0;background:color-mix(in srgb,#000 55%,transparent);
-    z-index:90;padding:18px;place-items:center;backdrop-filter:blur(6px)}
+  /* ---------- المودال والتوست ---------- */
+  .modal{display:none;position:fixed;inset:0;z-index:120;padding:18px;place-items:center;
+    background:color-mix(in srgb,#000 50%,transparent);backdrop-filter:blur(6px)}
   .modal.show{display:grid}
-  .modal-card{width:min(420px,100%);background:linear-gradient(180deg,var(--card-hi),var(--card));
-    border:1px solid var(--line-hi);border-radius:var(--r-lg);padding:24px;
-    box-shadow:0 30px 70px color-mix(in srgb,#000 50%,transparent);animation:prizeUp .4s ease}
-  .modal-card h2{margin:0 0 8px}
-  .modal-card ol{line-height:2.1;padding-right:22px;color:var(--muted);font-size:14px}
+  .modal-card{width:min(420px,100%);border-radius:var(--r-lg);padding:24px;
+    background:linear-gradient(180deg,var(--card-hi),var(--card));
+    border:1px solid var(--line-hi);
+    box-shadow:0 30px 70px color-mix(in srgb,#000 45%,transparent);animation:prizeUp .4s ease}
+  .modal-card h2{margin:0 0 8px;font-size:18px}
+  .modal-card ol{line-height:2.2;padding-right:22px;color:var(--muted);font-size:13.5px;margin:8px 0 0}
 
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(140%);
-    background:var(--deep);color:var(--ink);border:1px solid var(--line-hi);
-    padding:13px 20px;border-radius:14px;font-size:13.5px;font-weight:500;
-    transition:.3s;z-index:99;max-width:90%;text-align:center;
-    box-shadow:0 14px 30px color-mix(in srgb,#000 45%,transparent)}
+    background:var(--card-hi);color:var(--ink);border:1px solid var(--line-hi);
+    padding:13px 20px;border-radius:14px;font-size:13px;font-weight:500;font-family:var(--font);
+    transition:.3s;z-index:130;max-width:90%;text-align:center;
+    box-shadow:0 14px 30px var(--shadow)}
   .toast.show{transform:translateX(-50%) translateY(0)}
-  .toast.err{border-color:#8c2f2f;color:#f0b9b9}
+  .toast.err{border-color:#b04545;color:#c96a6a}
 
   @media (prefers-reduced-motion:reduce){
-    .wheel{transition:none}
     .member-card::after,.btn::after,.track span::after,.mc-seal svg,
-    .prize-rays,.prize-emoji,.reveal{animation:none}
-    .reveal{opacity:1;transform:none}
+    .boot-ring,.boot-bar span,.prize-rays,.prize-emoji,
+    .armed .wheel-lamp,.spinning .wheel-lamp,.wheel-shell.armed::after{animation:none!important}
+    .reveal,.in .reveal{animation:none!important;opacity:1;transform:none}
   }
 </style>
 </head>
 <body>
-  <main class="wrap">
-    <div class="loader" id="loading"><div class="brew"></div><div>…نحضّر بطاقتك</div></div>
-    <div id="content" style="display:none"></div>
-  </main>
+
+  <!-- شاشة الافتتاح -->
+  <div class="boot" id="boot">
+    <div class="boot-inner">
+      <div class="boot-emblem">
+        <div class="boot-ring"></div>
+        <div class="boot-ring r2"></div>
+        <div class="boot-logo" id="bootLogo">☕</div>
+      </div>
+      <h1 class="boot-name" id="bootName">محفظة الولاء</h1>
+      <p class="boot-kicker">بطاقة العضوية الرقمية</p>
+      <p class="boot-status" id="bootStatus">…نحضّر بطاقتك</p>
+      <div class="boot-bar" id="bootBar"><span></span></div>
+    </div>
+  </div>
+
+  <main class="wrap"><div id="content" style="display:none"></div></main>
 
   <!-- ستارة الجائزة -->
   <div class="prize-overlay" id="prizeOverlay">
@@ -371,43 +448,103 @@ import { callFn, hashParam, applyTheme, toast } from "./app.js";
 
 const token = hashParam("t");
 const $ = (s)=>document.querySelector(s);
-let state=null, wheelPrizes=[], currentRotation=0;
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let state=null, wheelLabelsArr=[], currentRotation=0, spinning=false;
+const bootT0 = performance.now();
 
-if(!token){ $("#loading").innerHTML="الرابط غير صالح.<br>اطلب رابطك من الكافيه."; }
-else load();
+/* ================= أدوات الألوان (لاشتقاق كل شيء من هوية الكافيه) ================= */
+function hex(c){
+  c=(c||"").trim().replace("#","");
+  if(c.length===3) c=c.split("").map(x=>x+x).join("");
+  const n=parseInt(c,16);
+  return isNaN(n)?[36,24,18]:[(n>>16)&255,(n>>8)&255,n&255];
+}
+const toHex=(r)=>"#"+r.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,"0")).join("");
+const mixC=(a,b,t)=>toHex(hex(a).map((v,i)=>v+(hex(b)[i]-v)*t));
+function lum(c){const [r,g,b]=hex(c).map(v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4});
+  return .2126*r+.7152*g+.0722*b;}
+const onColor=(c)=>lum(c)>.5?"#221912":"#ffffff";
+
+const DEFAULTS={color_primary:"#6F4E37",color_secondary:"#C8A97E",color_background:"#241812",color_button:"#C8A97E"};
+let brand={...DEFAULTS};
+
+/* تطبيق هوية الكافيه: الألوان الأربعة + اشتقاق نمط داكن/فاتح + ألوان النص فوقها */
+function applyBrandTheme(cafe){
+  brand={...DEFAULTS,...Object.fromEntries(Object.entries(cafe||{}).filter(([,v])=>v))};
+  applyTheme(brand); // من app.js — يضبط ‎--primary/--secondary/--bg/--btn
+  const r=document.documentElement;
+  r.dataset.theme = lum(brand.color_background)>.45 ? "light" : "dark";
+  r.style.setProperty("--on-primary",  onColor(brand.color_primary));
+  r.style.setProperty("--on-btn",      onColor(brand.color_button));
+  r.style.setProperty("--on-secondary",onColor(brand.color_secondary));
+  const meta=document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.content=brand.color_background;
+}
+
+/* ================= شاشة الافتتاح: شعار الكافيه فورًا (مع تخزين محلي) ================= */
+const brandKey = token ? "brand:"+token : null;
+function paintBoot(name,logo){
+  if(name) $("#bootName").textContent=name;
+  if(logo) $("#bootLogo").innerHTML=`<img src="${logo}" alt="">`;
+}
+try{
+  const cached = brandKey && JSON.parse(localStorage.getItem(brandKey)||"null");
+  if(cached){ applyBrandTheme(cached); paintBoot(cached.name, cached.logo_url); }
+}catch(e){}
+
+if(!token){
+  $("#bootStatus").textContent="الرابط غير صالح — اطلب رابطك من الكافيه.";
+  $("#bootBar").style.display="none";
+}else load();
 
 async function load(){
   try{
     state = await callFn("customer-me", { magic_token: token });
-    applyTheme(state.cafe);
+    const cafe=state.cafe||{};
+    applyBrandTheme(cafe);
+    paintBoot(cafe.name, cafe.logo_url);
+    try{ localStorage.setItem(brandKey, JSON.stringify({
+      name:cafe.name, logo_url:cafe.logo_url,
+      color_primary:cafe.color_primary, color_secondary:cafe.color_secondary,
+      color_background:cafe.color_background, color_button:cafe.color_button
+    })); }catch(e){}
     render();
-  }catch(e){ $("#loading").innerHTML="تعذّر تحميل صفحتك.<br>تأكد من الرابط."; }
+    /* لحظة الهوية: لا نخفي الشعار قبل اكتمالها */
+    const wait=Math.max(0, 1200-(performance.now()-bootT0));
+    setTimeout(()=>{
+      $("#boot").classList.add("hide");
+      document.body.classList.add("in");
+    }, reduced?0:wait);
+  }catch(e){
+    $("#bootStatus").textContent="تعذّر تحميل بطاقتك — تأكد من الرابط.";
+    $("#bootBar").style.display="none";
+  }
 }
 
 function fmtDate(s){return new Date(s).toLocaleDateString("ar-SA");}
 function fmtDateTime(s){return new Date(s).toLocaleString("ar-SA",{dateStyle:"medium",timeStyle:"short"});}
 
-/* حلقة النص الدائرية في ختم العضوية */
 function sealSVG(name){
-  const txt = `${name||"كافيه"} • بطاقة الولاء • `;
+  const txt=`${name||"كافيه"} • بطاقة الولاء • `;
   return `<svg viewBox="0 0 100 100">
     <defs><path id="cir" d="M50,50 m-38,0 a38,38 0 1,1 76,0 a38,38 0 1,1 -76,0"/></defs>
     <circle cx="50" cy="50" r="47" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1"/>
-    <text font-size="10.5" font-family="Reem Kufi, sans-serif" fill="rgba(255,255,255,.85)" letter-spacing="1.5">
+    <text font-size="11" fill="rgba(255,255,255,.92)">
       <textPath href="#cir">${txt}${txt}</textPath>
     </text></svg>`;
 }
 
+/* ================= بناء الصفحة ================= */
 function render(){
   const c=state, cafe=c.cafe||{};
   const need=c.cups_per_reward||10, bal=c.balance||0;
-  const total=(c.visits||[]).reduce((s,v)=>s+(v.cups||0),0);
   const remain=Math.max(0,need-bal);
   const percent=Math.min(100,Math.round((bal/need)*100));
+  const canSpin=!!c.pending_spin_visit_id;
+  const logo=cafe.logo_url?`<img src="${cafe.logo_url}" alt="">`:"☕";
 
   const stamps=Array.from({length:need},(_,i)=>
-    `<div class="stamp ${i<bal?"on":""}" style="animation-delay:${.35+i*.07}s">☕</div>`).join("");
+    `<div class="stamp ${i<bal?"on":""}" style="animation-delay:${.5+i*.06}s">☕</div>`).join("");
 
   const rewards=(c.rewards||[]).map(r=>`
     <div class="row">
@@ -423,17 +560,14 @@ function render(){
       <span class="pill">زيارة</span>
     </div>`).join("") || `<div class="empty">لا زيارات مسجّلة بعد</div>`;
 
-  const canSpin=!!c.pending_spin_visit_id;
-  const logo = cafe.logo_url?`<img src="${cafe.logo_url}" alt="">`:"☕";
-
   $("#content").innerHTML=`
     <section class="hero reveal">
       <div class="member-card" id="memberCard">
         <div class="mc-top">
           <div class="mc-brand">
             <div class="mc-logo">${logo}</div>
-            <div>
-              <p class="mc-name display">${cafe.name||"كافيه"}</p>
+            <div style="min-width:0">
+              <p class="mc-name">${cafe.name||"كافيه"}</p>
               <p class="mc-tag">LOYALTY MEMBER</p>
             </div>
           </div>
@@ -453,25 +587,28 @@ function render(){
     <section class="card reveal">
       <p class="eyebrow">رصيد الأكواب</p>
       <div class="bal-row">
-        <div><span class="bal-num" id="curCups">${bal}</span> <span class="bal-of">/ ${need}</span></div>
-        <div class="bal-side"><span class="lbl">إجمالي أكوابك</span><strong>${total}</strong></div>
+        <span class="bal-num">${bal}</span><span class="bal-of">من ${need}</span>
       </div>
-      <div class="track"><span id="progressBar" style="width:${percent}%"></span></div>
+      <div class="track"><span style="width:${percent}%"></span></div>
       <div class="stamps">${stamps}</div>
-      <p class="remain">${remain===0?"🎉 كوبك المجاني بانتظارك!":`باقٍ ${remain} ${remain==1?"كوب واحد":"أكواب"} على كوبك المجاني`}</p>
+      <p class="remain">${remain===0?"🎉 كوبك المجاني بانتظارك — أخبر الباريستا!":`باقٍ ${remain} ${remain==1?"كوب واحد":"أكواب"} على كوبك المجاني`}</p>
     </section>
 
     <section class="card roulette reveal">
       <p class="eyebrow">روليت المكافآت</p>
       <p class="muted" id="rouletteText">
         ${canSpin?"لديك دورة مؤهلة من زيارتك الأخيرة — جرّب حظك.":"دورتك القادمة تُفتح بعد زيارتك المؤهلة القادمة."}</p>
-      <div class="wheel-shell">
+      <div class="wheel-shell ${canSpin?"armed":""}" id="wheelShell">
         <div class="bezel"></div>
-        <div class="wheel" id="wheel"><div class="wheel-labels" id="wheelLabels"></div></div>
+        <div class="wheel" id="wheel">
+          <div class="wheel-sep" id="wheelSep"></div>
+          <div class="wheel-labels" id="wheelLabels"></div>
+        </div>
         <div class="wheel-center">${logo}</div>
         <div class="wheel-lamps" id="wheelLamps"></div>
         <div class="wheel-pointer" id="pointer"></div>
       </div>
+      ${canSpin?`<p class="drag-hint">اسحب العجلة بقوة وأفلتها — أو اضغط الزر</p>`:""}
       <button class="btn" id="spinBtn" ${canSpin?"":"disabled"}>
         ${canSpin?"أدر العجلة":"غير متاح حاليًا"}</button>
       <div class="result" id="spinResult"></div>
@@ -488,18 +625,20 @@ function render(){
       <div class="list">${visits}</div>
     </section>
   `;
-  $("#loading").style.display="none";
   $("#content").style.display="block";
 
-  wheelPrizes = (c.roulette_preview||[]).map(p=>p.label);
-  drawWheel(wheelPrizes.length?wheelPrizes:["خصم","ترقية","إضافة","كوب مجاني","نقاط","حظ أوفر"]);
+  wheelLabelsArr=(c.roulette_preview||[]).map(p=>p.label);
+  drawWheel(wheelLabelsArr.length?wheelLabelsArr:["خصم","ترقية","إضافة","كوب مجاني","نقاط","حظ أوفر"]);
+  $("#wheel").style.transform=`rotate(${currentRotation}deg)`;
 
-  if(canSpin) $("#spinBtn").onclick=doSpin;
+  $("#spinBtn").onclick=()=>{ if(canSpinNow()) startSpin(900); };
   $("#installBtn").onclick=openInstall;
-  initTilt();
+  initTilt(); initDrag();
 }
 
-/* ميلان ثلاثي الأبعاد للبطاقة */
+const canSpinNow=()=>!!state?.pending_spin_visit_id && !spinning;
+
+/* ميلان ثلاثي الأبعاد لبطاقة العضوية */
 function initTilt(){
   if(reduced) return;
   const card=$("#memberCard"); if(!card) return;
@@ -508,145 +647,277 @@ function initTilt(){
     const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
     card.style.transform=`rotateY(${x*7}deg) rotateX(${-y*7}deg)`;
   });
-  card.addEventListener("pointerleave",()=>{card.style.transform="";});
+  card.addEventListener("pointerleave",()=>card.style.transform="");
 }
 
+/* ================= رسم العجلة — ألوان مشتقة من الهوية ونص متباين تلقائيًا ================= */
+let segColors=[];
 function drawWheel(labels){
   const seg=(labels&&labels.length)?labels:["1","2","3","4","5","6"];
   const n=seg.length;
-  /* ألوان القطاعات مشتقة من هوية الكافيه بنسب متدرجة */
-  const s=getComputedStyle(document.documentElement);
-  const P=s.getPropertyValue("--primary").trim(), S=s.getPropertyValue("--secondary").trim();
-  const mixes=[
-    `color-mix(in srgb, ${P} 92%, #000)`,
-    `color-mix(in srgb, ${S} 88%, #fff)`,
-    `color-mix(in srgb, ${P} 72%, ${S})`,
-    `color-mix(in srgb, ${S} 70%, ${P})`,
-    `color-mix(in srgb, ${P} 88%, #fff)`,
-    `color-mix(in srgb, ${S} 82%, #000)`
+  const P=brand.color_primary, S=brand.color_secondary;
+  const palette=[
+    mixC(P,"#000000",.16),
+    mixC(S,P,.32),
+    mixC(P,S,.34),
+    mixC(S,"#000000",.24),
+    mixC(P,"#ffffff",.16),
+    mixC(S,"#ffffff",.22),
   ];
+  segColors=Array.from({length:n},(_,i)=>palette[i%palette.length]);
+  /* لا يتكرر لونان متجاوران عند التفاف العجلة */
+  if(n>1 && segColors[n-1]===segColors[0]) segColors[n-1]=palette[(n+2)%palette.length];
+
   let g="";
   for(let i=0;i<n;i++){
     const a0=(360/n)*i, a1=(360/n)*(i+1);
-    g+=`${mixes[i%mixes.length]} ${a0}deg ${a1}deg,`;
+    g+=`${segColors[i]} ${a0}deg ${a1}deg,`;
   }
   const w=$("#wheel"); if(w) w.style.background=`conic-gradient(${g.slice(0,-1)})`;
 
+  /* فواصل ذهبية رفيعة بين القطاعات */
+  const sepDeg=360/n, line=.9;
+  $("#wheelSep").style.background=
+    `repeating-conic-gradient(from ${-line/2}deg, var(--acc-1) 0deg ${line}deg, transparent ${line}deg ${sepDeg}deg)`;
+
+  const shellW=(shellEl()?.offsetWidth)||330;
+  const labelR=Math.round((shellW/2-9)*.63), lampR=Math.round(shellW/2+6);
   const box=$("#wheelLabels"); if(box){ box.innerHTML="";
     seg.forEach((label,i)=>{
       const mid=(360/n)*i+(360/n)/2;
       const el=document.createElement("div"); el.className="wheel-label";
-      el.style.transform=`rotate(${mid}deg) translateY(-100px) rotate(${-mid}deg)`;
+      /* نص شعاعي كالعجلات الحقيقية — صحيح مهما دارت العجلة */
+      el.style.transform=`rotate(${mid}deg) translateY(${-labelR}px) rotate(-90deg)`;
+      el.style.color=onColor(segColors[i]);
       el.textContent=String(label).length<=13?label:String(label).slice(0,12)+"…";
       box.appendChild(el);
     });
   }
   const lamps=$("#wheelLamps"); if(lamps&&!lamps.childElementCount){
     for(let i=0;i<24;i++){ const l=document.createElement("span");
-      l.className="wheel-lamp"; l.style.transform=`rotate(${i*15}deg) translateY(-176px)`;
+      l.className="wheel-lamp"; l.style.transform=`rotate(${i*15}deg) translateY(${-lampR}px)`;
+      l.style.animationDelay=(i*(1.5/24))+"s";
       lamps.appendChild(l); }
   }
 }
 
-/* صوت واهتزاز */
+/* ================= صوت + اهتزاز ================= */
 let audioCtx=null;
 function ensureAudio(){ try{ audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
-function tick(){
+function vibrate(p){ if(navigator.vibrate) try{navigator.vibrate(p);}catch(e){} }
+function tickFX(strength=1){
   const p=$("#pointer");
-  if(p){ p.classList.add("kick"); setTimeout(()=>p.classList.remove("kick"),70); }
+  if(p){ p.classList.add("kick"); setTimeout(()=>p.classList.remove("kick"),60); }
+  vibrate(Math.round(5*strength));
   if(!audioCtx) return;
   const o=audioCtx.createOscillator(), g=audioCtx.createGain();
-  o.type="square"; o.frequency.value=880;
-  g.gain.setValueAtTime(.04,audioCtx.currentTime);
+  o.type="square"; o.frequency.value=820+Math.random()*120;
+  g.gain.setValueAtTime(.035*strength,audioCtx.currentTime);
   g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.05);
   o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+.05);
 }
-function fanfare(win){ if(!audioCtx) return;
+function whoosh(){
+  if(!audioCtx) return;
+  const len=audioCtx.sampleRate*.7, buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate);
+  const d=buf.getChannelData(0);
+  for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*(1-i/len);
+  const src=audioCtx.createBufferSource(); src.buffer=buf;
+  const f=audioCtx.createBiquadFilter(); f.type="bandpass"; f.frequency.value=600; f.Q.value=.8;
+  const g=audioCtx.createGain(); g.gain.setValueAtTime(.09,audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.7);
+  src.connect(f); f.connect(g); g.connect(audioCtx.destination); src.start();
+}
+function fanfare(win){
+  if(!audioCtx) return;
   const notes=win?[523,659,784,1047]:[440,392];
-  notes.forEach((f,i)=>{ const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-    o.type="triangle"; o.frequency.value=f; const t=audioCtx.currentTime+i*.13;
+  notes.forEach((fq,i)=>{ const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type="triangle"; o.frequency.value=fq; const t=audioCtx.currentTime+i*.13;
     g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.12,t+.03);
     g.gain.exponentialRampToValueAtTime(.0001,t+.3);
     o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t+.32); });
 }
-function vibrate(p){ if(navigator.vibrate) try{navigator.vibrate(p);}catch(e){} }
 
-/* قصاصات احتفال بألوان الهوية */
+/* ================= فيزياء العجلة: سحب وإفلات حقيقي ================= */
+const wheelEl=()=>$("#wheel");
+const shellEl=()=>$("#wheelShell");
+const segAngle=()=>360/(wheelLabelsArr.length||6);
+
+function setWheel(deg,transition="none"){
+  const w=wheelEl(); if(!w) return;
+  w.style.transition=transition; w.style.transform=`rotate(${deg}deg)`;
+}
+function angleAt(e){
+  const r=shellEl().getBoundingClientRect();
+  return Math.atan2(e.clientY-(r.top+r.height/2), e.clientX-(r.left+r.width/2))*180/Math.PI;
+}
+
+function initDrag(){
+  const shell=shellEl(); if(!shell) return;
+  let dragging=false, a0=0, visual=0, lastSeg=0, samples=[];
+
+  shell.addEventListener("pointerdown",(e)=>{
+    if(spinning) return;
+    ensureAudio();
+    dragging=true; shell.classList.add("dragging");
+    shell.setPointerCapture(e.pointerId);
+    a0=angleAt(e); visual=currentRotation; samples=[[performance.now(),0]];
+    lastSeg=Math.floor(((visual%360)+360)%360/segAngle());
+  });
+  shell.addEventListener("pointermove",(e)=>{
+    if(!dragging) return;
+    let d=angleAt(e)-a0;
+    d=((d+540)%360)-180;                     /* أقصر فرق زاوي */
+    const resist=canSpinNow()?1:.15;          /* مقاومة إن لم تكن مؤهلة */
+    visual=currentRotation+d*resist;
+    setWheel(visual);
+    const s=Math.floor(((visual%360)+360)%360/segAngle());
+    if(s!==lastSeg){ lastSeg=s; tickFX(.7); }
+    const now=performance.now();
+    samples.push([now,d]); while(samples.length>6) samples.shift();
+  });
+  const release=(e)=>{
+    if(!dragging) return;
+    dragging=false; shell.classList.remove("dragging");
+    /* السرعة الزاوية عند الإفلات (درجة/مللي ثانية) */
+    let v=0;
+    if(samples.length>=2){
+      const [t1,d1]=samples[0], [t2,d2]=samples[samples.length-1];
+      if(t2>t1) v=(d2-d1)/(t2-t1);
+    }
+    if(canSpinNow() && Math.abs(v)>.25){
+      currentRotation=visual;
+      startSpin(Math.min(1400, Math.abs(v)*1000));
+    }else{
+      /* ارتداد ناعم للوضع السابق */
+      setWheel(currentRotation,"transform .7s cubic-bezier(.2,1.6,.3,1)");
+    }
+  };
+  shell.addEventListener("pointerup",release);
+  shell.addEventListener("pointercancel",release);
+}
+
+/* ================= الدوران: انطلاق حر ثم هبوط دقيق على جائزة السيرفر ================= */
+let raf=null;
+function startSpin(v0DegPerSec){
+  if(!canSpinNow()) return;
+  spinning=true;
+  ensureAudio(); whoosh(); vibrate([28]);
+  const shell=shellEl(); shell.classList.remove("armed"); shell.classList.add("spinning");
+  const btn=$("#spinBtn"); btn.disabled=true; btn.textContent="…العجلة تدور";
+  $("#spinResult").classList.remove("show");
+
+  /* دوران حر واقعي حتى يصل ردّ السيرفر */
+  let v=Math.max(600,v0DegPerSec)/1000, lastT=performance.now();
+  let lastSeg=Math.floor(((currentRotation%360)+360)%360/segAngle());
+  let resolved=false, minSpinDone=false;
+  setTimeout(()=>minSpinDone=true, 700);
+
+  if(!reduced){
+    const loop=(t)=>{
+      const dt=Math.min(48, t-lastT); lastT=t;
+      v=Math.min(v+dt*.0006, 1.05);           /* تسارع حتى سرعة قصوى */
+      currentRotation+=v*dt;
+      setWheel(currentRotation);
+      const s=Math.floor(((currentRotation%360)+360)%360/segAngle());
+      if(s!==lastSeg){ lastSeg=s; tickFX(1); }
+      if(!(resolved&&minSpinDone)) raf=requestAnimationFrame(loop);
+      else land();
+    };
+    raf=requestAnimationFrame(loop);
+  }
+
+  let res=null, err=null;
+  callFn("spin",{ magic_token:token, visit_id:state.pending_spin_visit_id })
+    .then(r=>{res=r;}).catch(e=>{err=e;})
+    .finally(()=>{ resolved=true; if(reduced) land(); });
+
+  function land(){
+    if(raf){ cancelAnimationFrame(raf); raf=null; }
+    if(err){
+      const back=Math.ceil(currentRotation/360)*360;
+      setWheel(back,"transform 1.2s cubic-bezier(.2,.8,.2,1)");
+      currentRotation=back;
+      shell.classList.remove("spinning"); shell.classList.add("armed");
+      if(err.message==="ALREADY_SPUN") toast("سبق اللعب على هذه الزيارة",true);
+      else toast("تعذّر اللعب — حاول مجددًا",true);
+      btn.disabled=false; btn.textContent="أدر العجلة"; spinning=false;
+      return;
+    }
+    /* عجلة السيرفر هي الحقيقة */
+    wheelLabelsArr=(res.wheel||[]).map(w=>w.label);
+    drawWheel(wheelLabelsArr);
+    const n=wheelLabelsArr.length||6;
+    const idx=Math.max(0,wheelLabelsArr.indexOf(res.prize_label));
+    const segMid=(360/n)*idx+(360/n)/2;
+    const curMod=((currentRotation%360)+360)%360;
+    const delta=(360-((curMod+segMid)%360))%360;
+    const target=currentRotation + 360*5 + delta;
+
+    if(reduced){
+      setWheel(target); currentRotation=target; finish(res); return;
+    }
+    setWheel(target,"transform 4.6s cubic-bezier(.08,.84,.13,1)");
+    currentRotation=target;
+
+    let d=90; const decel=()=>{ tickFX(.9); d*=1.12; if(d<650) setTimeout(decel,d); };
+    decel();
+    setTimeout(()=>finish(res),4700);
+  }
+
+  function finish(res){
+    shell.classList.remove("spinning");
+    const win=res.prize_type!=="none";
+    const box=$("#spinResult"); box.classList.add("show");
+    if(win){
+      box.style.color="var(--ok)";
+      box.style.background="color-mix(in srgb, var(--ok) 10%, transparent)";
+      box.style.borderColor="color-mix(in srgb, var(--ok) 30%, transparent)";
+      box.textContent=`🎉 مبروك! ربحت: ${res.prize_label}`;
+      fanfare(true); vibrate([60,40,60,40,140]);
+    }else{
+      box.style.color="var(--muted)";
+      box.style.background="var(--field)";
+      box.style.borderColor="var(--line)";
+      box.textContent=`حظ أوفر: ${res.prize_label}`;
+      fanfare(false); vibrate([70]);
+    }
+    setTimeout(()=>showPrize(win,res.prize_label), reduced?0:650);
+  }
+}
+
+/* ================= ستارة الجائزة والقصاصات ================= */
 function confetti(){
   if(reduced) return;
-  const s=getComputedStyle(document.documentElement);
-  const colors=[s.getPropertyValue("--secondary"),s.getPropertyValue("--primary"),"#fff",
-    s.getPropertyValue("--gold-1")||s.getPropertyValue("--secondary")];
-  for(let i=0;i<70;i++){
+  const colors=[brand.color_secondary, brand.color_primary,
+    mixC(brand.color_secondary,"#ffffff",.5), "#ffffff"];
+  for(let i=0;i<80;i++){
     const c=document.createElement("i"); c.className="confetti";
     c.style.left=Math.random()*100+"vw";
     c.style.background=colors[i%colors.length];
-    c.style.animationDuration=(2.2+Math.random()*2)+"s";
-    c.style.animationDelay=(Math.random()*.6)+"s";
+    c.style.animationDuration=(2.2+Math.random()*2.2)+"s";
+    c.style.animationDelay=(Math.random()*.7)+"s";
     document.body.appendChild(c);
-    setTimeout(()=>c.remove(),5200);
+    setTimeout(()=>c.remove(),5500);
   }
 }
-
 function showPrize(win,label){
-  $("#prizeEmoji").textContent = win?"🎁":"☕";
-  $("#prizeKicker").textContent = win?"مبروك — ربحت":"هذه المرة";
-  $("#prizeName").textContent = label;
-  $("#prizeClose").textContent = win?"استلمها في مكافآتي":"حظ أوفر بالزيارة القادمة";
+  $("#prizeEmoji").textContent=win?"🎁":"☕";
+  $("#prizeKicker").textContent=win?"مبروك — ربحت":"هذه المرة";
+  $("#prizeName").textContent=label;
+  $("#prizeClose").textContent=win?"استلمها في مكافآتي":"حظ أوفر بالزيارة القادمة";
   $("#prizeOverlay").classList.add("show");
   if(win) confetti();
 }
-$("#prizeClose").onclick=()=>{ $("#prizeOverlay").classList.remove("show"); load(); };
-
-async function doSpin(){
-  ensureAudio();
-  const btn=$("#spinBtn"); btn.disabled=true; btn.textContent="…العجلة تدور";
-  $("#spinResult").classList.remove("show");
+$("#prizeClose").onclick=async()=>{
+  $("#prizeOverlay").classList.remove("show");
+  spinning=false;
   try{
-    const res=await callFn("spin",{ magic_token:token, visit_id:state.pending_spin_visit_id });
-    wheelPrizes=(res.wheel||[]).map(w=>w.label);
-    drawWheel(wheelPrizes);
+    state=await callFn("customer-me",{ magic_token:token });
+    render();
+  }catch(e){}
+};
 
-    const n=wheelPrizes.length||6;
-    const idx=Math.max(0,wheelPrizes.indexOf(res.prize_label));
-    const segMid=(360/n)*idx+(360/n)/2;
-
-    const curMod=((currentRotation%360)+360)%360;
-    const delta=(360-((curMod+segMid)%360))%360;
-    currentRotation += 360*6 + delta;
-
-    const wheel=$("#wheel");
-    wheel.classList.add("is-spinning");
-    wheel.style.transform=`rotate(${currentRotation}deg)`;
-
-    vibrate([30]);
-    let d=90; const tickLoop=()=>{ tick(); d*=1.12; if(d<650) setTimeout(tickLoop,d); };
-    tickLoop();
-
-    setTimeout(()=>{
-      wheel.classList.remove("is-spinning");
-      const win = res.prize_type!=="none";
-      const box=$("#spinResult"); box.classList.add("show");
-      if(win){ box.style.color="var(--ok)";
-        box.style.background="color-mix(in srgb, var(--ok) 12%, transparent)";
-        box.style.borderColor="color-mix(in srgb, var(--ok) 30%, transparent)";
-        box.textContent=`🎉 مبروك! ربحت: ${res.prize_label}`;
-        fanfare(true); vibrate([60,40,60,40,120]); }
-      else{ box.style.color="var(--muted)";
-        box.style.background="color-mix(in srgb, var(--deep) 45%, transparent)";
-        box.style.borderColor="var(--line)";
-        box.textContent=`حظ أوفر: ${res.prize_label}`;
-        fanfare(false); vibrate([80]); }
-      setTimeout(()=>showPrize(win,res.prize_label),650);
-    },4700);
-  }catch(e){
-    if(e.message==="ALREADY_SPUN") toast("سبق اللعب على هذه الزيارة",true);
-    else toast("تعذّر اللعب",true);
-    btn.disabled=false; btn.textContent="أدر العجلة";
-  }
-}
-
-/* التثبيت على الشاشة الرئيسية */
+/* ================= التثبيت على الشاشة الرئيسية ================= */
 let deferred;
 window.addEventListener("beforeinstallprompt",(e)=>{e.preventDefault();deferred=e;});
 async function openInstall(){
