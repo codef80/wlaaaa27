@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ar" dir="rtl" data-theme="dark">
+<html lang="ar" dir="rtl" data-theme="dark" class="pre-brand">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -136,6 +136,15 @@
     background:linear-gradient(90deg, transparent, var(--acc-1), transparent);
     animation:scan 1.2s ease-in-out infinite}
   @keyframes scan{0%{transform:translateX(220%)}100%{transform:translateX(-320%)}}
+
+  /* قبل وصول ألوان المحل: خلفية محايدة داكنة بلا لون هوية،
+     ونخفي العناصر الملوّنة (الشعار/الاسم/الحلقات) حتى تُطبّق ألوان المحل مباشرة */
+  :root.pre-brand .boot{background:#F5EFE6}
+  :root.pre-brand .boot::before{opacity:0}
+  :root.pre-brand .boot-emblem,
+  :root.pre-brand .boot-name,
+  :root.pre-brand .boot-kicker{opacity:0}
+  .boot-emblem,.boot-name,.boot-kicker{transition:opacity .35s ease}
 
   /* ================================================================
      بطاقة العضوية
@@ -479,6 +488,8 @@ function applyBrandTheme(cafe){
   r.style.setProperty("--on-secondary",onColor(brand.color_secondary));
   const meta=document.querySelector('meta[name="theme-color"]');
   if(meta) meta.content=brand.color_background;
+  // كُشِفت ألوان المحل — نُزيل الحالة المحايدة فتظهر الهوية مباشرة
+  r.classList.remove("pre-brand");
 }
 
 /* ================= شاشة الافتتاح: شعار الكافيه فورًا (مع تخزين محلي) ================= */
